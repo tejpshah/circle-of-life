@@ -11,9 +11,13 @@ class Graph:
         undirected edges in adjacency list
         initialize graph for connectivity 
         """
+        self.num_added = 0 
         self.nodes = nodes 
         self.adjlist = {i:[(i+1)%(nodes+1)] for i in range(1, nodes+1)}
         self.adjlist[self.nodes] =  [1] 
+        self.add_rand_edges() 
+        self.visualize_graph()
+
 
     def pick_rand_node(self):
         """picks rand node from (1,nodes)"""
@@ -63,37 +67,23 @@ class Graph:
             candidates = self.candidate_nodes_k(start, k=5)
             choice = np.choose(random.randint(0, len(candidates)-1), candidates)
             self.add_edge(start, choice)
+            self.num_added += 1
     
-    def visualize_graph(self, fn='graph.png'):
-        """ Prints out a visualization of the adjacency list""" 
+    def visualize_graph(self, fn='environment.png'):
+        """ Prints out a visualization of the adjacency list
+        with the node number as the visual on graph """
+        plt.rcParams['figure.figsize'] = [8, 5]
+        G = nx.from_dict_of_lists(self.adjlist)
+        nx.draw(G, with_labels=True)
+        plt.savefig(fn)
+        plt.show()
 
-        # convert adjacency list to dict
-        graph_dict = self.adjlist
-
-        # create a directed graph from dict
-        G = nx.DiGraph()
-        for key in graph_dict:
-            for value in graph_dict[key]:
-                if value not in G: 
-                    G.add_node(value)
-                G.add_edge(key, value)
-
-        # draw graph 
-        pos = nx.shell_layout(G)
-        nx.draw(G, pos)
-
-        ## save as png 
-        plt.savefig(fn, format='PNG')
 
         
 
 
 
 
-g1 = Graph(nodes=15) 
-print(g1.nodes)
-print(g1.adjlist)
-print(g1.candidate_nodes_k(2, 5))
-g1.add_rand_edges()
-print(g1.adjlist)
+g1 = Graph(nodes=50) 
 g1.visualize_graph()
+print(g1.num_added)
