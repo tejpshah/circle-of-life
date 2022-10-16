@@ -13,11 +13,16 @@ class Graph:
         """
         self.num_added = 0 
         self.nodes = nodes 
-        self.adjlist = {i:[(i+1)%(nodes+1)] for i in range(1, nodes+1)}
-        self.adjlist[self.nodes] =  [1] 
+        self.adjlist = self.init_adjlist(nodes=nodes)
+        #print(self.adjlist)
         self.add_rand_edges() 
         self.visualize_graph()
 
+    def init_adjlist(self, nodes=50):
+        hashmap = {i:[(i-1)%(nodes+1), (i+1)%(nodes+1)] for i in range(1, nodes+1)}
+        hashmap[1] = [nodes, 2]
+        hashmap[50] = [nodes-1, 1]
+        return hashmap 
 
     def pick_rand_node(self):
         """picks rand node from (1,nodes)"""
@@ -85,5 +90,5 @@ class Graph:
 
 
 g1 = Graph(nodes=50) 
-g1.visualize_graph()
+print(g1.adjlist)
 print(g1.num_added)
