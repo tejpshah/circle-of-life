@@ -4,13 +4,8 @@ class Graph:
     def __init__(self, nodes=50):
         self.nodes = nodes 
         self.nbrs = {x:[] for x in range(1,nodes+1)}
-        self.updates = 0 
-
         self.connect_circle()
-        self.increase_connectivity()
 
-        print(self.nbrs)
-    
     def add_edge(self, v, w):
         self.nbrs[v].append(w) 
         self.nbrs[w].append(v) 
@@ -32,22 +27,37 @@ class Graph:
         if node in candidates: candidates.remove(node)
         return list(candidates)
     
-    def increase_connectivity(self):
-        while True: 
-            sims = 1000 
-            v = random.randint(1, self.nodes)
-            while self.get_degree(v) >= 3: 
-                v = random.randint(1, self.nodes)
-                if sims == 0: return False 
-                sims -= 1
-            w = random.choice(self.candidate_edges_k(v, k=5))
-            if w not in self.nbrs[v]: 
-                self.add_edge(v,w)
-                self.updates += 1
+    def is_graph_done(self):
+        for nbr in self.nbrs.keys():
+            if self.get_degree(nbr) < 3:
+                return False 
+        return True 
 
-        
+    def increase_connectivity(self):
+        steps = 0 
+        while self.is_graph_done() or steps <= 25: 
+            v = random.randint(1, self.nodes)
+
+            timeout = 1000 
+            while self.get_degree(v) >= 3 and timeout > 0: 
+                v = random.randint(1, self.nodes)
+                timeout -= 1 
+
+            candidate_edges = self.candidate_edges_k(self.nodes, k=5)
+            w = random.choice(candidate_edges)
+            timeout = 1000 
+            while self.get_degree(w) >= 3 and w not in self.nbrs[w] and timeout > 0: 
+                w = random.choice(candidate_edges)
+                timeout -= 1
+            
+            if timeout == 0: break 
+            
+            if w != v: 
+                self.add_edge(v,w)
+                steps += 1 
+        print(steps)
 
 g1 = Graph(nodes=50)
-print(g1.updates)
-#print(g1.nbrs)
-#print(g1.candidate_edges_k(2, 5))
+print(g1.nbrs)
+g1.increase_connectivity()
+print(g1.nbrs)
