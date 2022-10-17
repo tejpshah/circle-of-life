@@ -1,4 +1,6 @@
 import random 
+import networkx as nx  
+import matplotlib.pyplot as plt
 
 class Graph:
     def __init__(self, nodes=50):
@@ -74,4 +76,19 @@ class Graph:
                     self.add_edge(v, w)
                     edges_added += 1 
         print(f"The number of edges added is {edges_added}")
+
+    def visualize_graph_circle(self): 
+        # visualization of the graph 
+        nx.draw_networkx(nx.Graph(self.nbrs), pos=nx.circular_layout(nx.Graph(self.nbrs)), node_size=50, with_labels=True)
+        plt.show()
+
+    def visualize_graph(self, fn='environment.png'):
+        """ Prints out a visualization of the adjacency list
+        with the node number as the visual on graph """
+        plt.rcParams['figure.figsize'] = [8, 5]
+        G = nx.from_dict_of_lists(self.nbrs)
+        nx.draw(G, with_labels=True)
+        # plt.savefig(fn)
+        plt.show()
+
 
