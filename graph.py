@@ -78,13 +78,12 @@ class Graph:
         print(f"The number of edges added is {edges_added}")
 
     def visualize_graph_circle(self): 
-        # visualization of the graph 
+        """visualizes nodes and their edges with labels in a circular layout"""
         nx.draw_networkx(nx.Graph(self.nbrs), pos=nx.circular_layout(nx.Graph(self.nbrs)), node_size=50, with_labels=True)
         plt.show()
 
     def visualize_graph(self, fn='environment.png'):
-        """ Prints out a visualization of the adjacency list
-        with the node number as the visual on graph """
+        """visualizes nodes and their edges with labels in non-circular layout"""
         plt.rcParams['figure.figsize'] = [8, 5]
         G = nx.from_dict_of_lists(self.nbrs)
         nx.draw(G, with_labels=True)
