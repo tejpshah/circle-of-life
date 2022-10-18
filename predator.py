@@ -35,8 +35,7 @@ class Predator:
         distances = dict()
         for neighbor in neighbors:
             distances[neighbor] = self.bfs(graph, neighbor, agent_location)
-        
-        print(distances)
+        # print(distances)
 
         # get shortest distance from current location to agent
         shortest_distance = min(distances.values())
