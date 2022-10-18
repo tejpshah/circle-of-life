@@ -8,3 +8,13 @@ So, maximum number of edges is 150*3=150 edges.
 But, with the initial circle we have 50*2=100 edges.
 There are possible edges = 150 - 100 = 50 edges. 
 But, each edge needs two nodes, so 50/2 = 25 max nodes
+
+# October 18th, 2022 Notes
+- Environment is done completely.
+- Prey, Predator, and the Agent is pretty much done, but may need to adjust based on functionality. 
+- Agent 1: Pretty straightforward - needs to understand directions - hardcoded rules (<60 minutes)
+- Agent 2: Predict optimal action for predator and prey, minimize pred first, max prey second
+- Agent 3: 
+
+- Add statistic on number of times where agent is seen and number of timesteps in the agent
+- 
