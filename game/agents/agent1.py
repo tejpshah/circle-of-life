@@ -5,10 +5,8 @@ class Agent1(Agent):
         super().__init__(location)
 
     def move(self, graph, predator, prey):
-        # get a list of the neighbors
-        neighbors = graph.get_neighbors(self.location)
-
         # neighbors that are closer to the prey and farther from the predator
+        neighbors = graph.get_neighbors(self.location)
         distance_from_prey = dict()
         distance_from_predator = dict()
         for neighbor in neighbors:
@@ -16,19 +14,24 @@ class Agent1(Agent):
             distance_from_predator[neighbor] = self.bfs(graph, neighbor, predator)
         
         shortest_distance_from_prey = min(distance_from_prey.values())
-        possible_moves_check_1_im = dict()
+        possible_moves_check_1 = dict()
         for neighbor, distance in distance_from_prey.items():
             if distance == shortest_distance_from_prey:
-                possible_moves_check_1_im[neighbor] = distance_from_predator.get(neighbor)
-
-        farthest_distance_from_predator = max(possible_moves_check_1_im.values())
-        possible_moves_check_1 = []
-        for neighbor, distance in possible_moves_check_1_im.items():
-            if distance == farthest_distance_from_predator:
-                possible_moves_check_1.append(neighbor)
+                possible_moves_check_1[neighbor] = distance_from_predator.get(neighbor)
 
         if len(possible_moves_check_1) == 1:
             self.location = possible_moves_check_1[0]
+            return 1
+
+        # neighbors that are closer to the prey and not closer to the predator
+        farthest_distance_from_predator = max(possible_moves_check_1.values())
+        possible_moves_check_2 = []
+        for neighbor, distance in possible_moves_check_1.items():
+            if distance == farthest_distance_from_predator:
+                possible_moves_check_2.append(neighbor)
+
+        if len(possible_moves_check_2) == 1:
+            self.location = possible_moves_check_2[0]
             return 1
 
         

@@ -1,9 +1,9 @@
-from graph import Graph 
-from prey import Prey
-from predator import Predator
+from game.graph import Graph 
+from game.prey import Prey
+from game.predator import Predator
 
 ### SANITY CHECKING THAT GRAPH WORKS ###
-g1 = Graph(nodes=10)
+g1 = Graph(nodes=5)
 print(g1.nbrs)
 g1.visualize_graph()
 g1.visualize_graph_circle()
