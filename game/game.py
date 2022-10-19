@@ -9,8 +9,8 @@ from .prey import Prey
 
 
 class Game:
-    def __init__(self):
-        self.graph = Graph(nodes=5)
+    def __init__(self, nodes=5):
+        self.graph = Graph(nodes=nodes)
 
         self.prey = Prey(random.randint(1, self.graph.get_nodes()))
         self.predator = Predator(random.randint(1, self.graph.get_nodes()))
