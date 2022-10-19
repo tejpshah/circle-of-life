@@ -2,6 +2,7 @@ import random
 import networkx as nx
 import matplotlib.pyplot as plt
 from game.agents.agent1 import Agent1
+from game.agents.agent2 import Agent2
 from .graph import Graph
 from .predator import Predator
 from .prey import Prey
@@ -45,6 +46,35 @@ class Game:
 
     def run_agent_1(self):
         self.agent = Agent1(self.agent_starting_location)
+
+        status = 0
+        while status == 0:
+            status = self.step()
+
+        return status
+
+    def run_agent_1_debug(self):
+        self.agent = Agent1(self.agent_starting_location)
+        self.visualize_graph()
+
+        status = 0
+        while status == 0:
+            status = self.step()
+            self.visualize_graph()
+
+        return status
+
+    def run_agent_2(self):
+        self.agent = Agent2(self.agent_starting_location)
+
+        status = 0
+        while status == 0:
+            status = self.step()
+
+        return status
+
+    def run_agent_2_debug(self):
+        self.agent = Agent2(self.agent_starting_location)
         self.visualize_graph()
 
         status = 0
@@ -68,8 +98,9 @@ class Game:
         """visualizes nodes and their edges with labels in non-circular layout"""
         plt.rcParams['figure.figsize'] = [8, 5]
         G = nx.from_dict_of_lists(self.graph.get_neighbors())
-        my_pos = nx.spring_layout(G, seed = 100)
-        nx.draw(G, pos = my_pos, node_color=self.visualize_graph_color_map(), with_labels=True)
+        my_pos = nx.spring_layout(G, seed=100)
+        nx.draw(G, pos=my_pos,
+                node_color=self.visualize_graph_color_map(), with_labels=True)
 
         figure_text = "Agent: {}, Prey: {}, Predator: {}".format(
             self.agent.location, self.prey.location, self.predator.location)
