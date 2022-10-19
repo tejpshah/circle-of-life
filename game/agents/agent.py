@@ -1,4 +1,7 @@
-class Agent:
+from abc import ABC, abstractmethod
+
+
+class Agent(ABC):
     def __init__(self, location):
         self.location = location
 
@@ -13,7 +16,7 @@ class Agent:
             path = queue.pop(0)
             node = path[-1]
             if node not in visited:
-                neighbors = graph.get_neighbors(node)
+                neighbors = graph.get_node_neighbors(node)
                 for neighbor in neighbors:
                     if neighbor == goal:
                         # print("shortest path: " + str(path + [neighbor]))
@@ -24,3 +27,7 @@ class Agent:
             visited.add(node)
 
         return -1
+
+    @abstractmethod
+    def move(self, graph, prey, predator):
+        pass

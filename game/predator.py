@@ -1,5 +1,6 @@
 import random
 
+
 class Predator:
     def __init__(self, location):
         self.location = location
@@ -27,7 +28,9 @@ class Predator:
 
         return -1
 
-    def move(self, graph, agent_location):
+    def move(self, graph, agent):
+        agent_location = agent.location
+
         # get a list of the predator's neighbors
         neighbors = graph.get_node_neighbors(self.location)
 

@@ -15,7 +15,7 @@ class Prey:
         # choose location at random while also considering current location
         possible_moves = neighbors + [self.location]
         new_location = random.choice(possible_moves)
-        
+
         # move to to the new location
         self.location = new_location
 
@@ -26,7 +26,7 @@ class Prey:
         """
         print("\nPrey Move")
         print("Current Location: " + str(self.location))
-        
+
         # get list of neighbors
         neighbors = graph.get_node_neighbors(self.location)
         print("Current Neighbors: " + str(neighbors))
@@ -36,7 +36,7 @@ class Prey:
         print("Possible Moves: " + str(possible_moves))
         new_location = random.choice(possible_moves)
         print("Chosen Location: " + str(new_location))
-        
+
         # move to to the new location
         self.location = new_location
         print("Moved Location: " + str(self.location))
