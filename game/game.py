@@ -68,7 +68,8 @@ class Game:
         """visualizes nodes and their edges with labels in non-circular layout"""
         plt.rcParams['figure.figsize'] = [8, 5]
         G = nx.from_dict_of_lists(self.graph.get_neighbors())
-        nx.draw(G, node_color=self.visualize_graph_color_map(), with_labels=True)
+        my_pos = nx.spring_layout(G, seed = 100)
+        nx.draw(G, pos = my_pos, node_color=self.visualize_graph_color_map(), with_labels=True)
 
         figure_text = "Agent: {}, Prey: {}, Predator: {}".format(
             self.agent.location, self.prey.location, self.predator.location)
