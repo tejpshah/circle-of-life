@@ -10,7 +10,7 @@ class Prey:
         selects among its neighbors or its current cell, uniformly at random, to determine its next step
         """
         # get list of neighbors
-        neighbors = graph.get_neighbors(self.location)
+        neighbors = graph.get_node_neighbors(self.location)
 
         # choose location at random while also considering current location
         possible_moves = neighbors + [self.location]
@@ -28,7 +28,7 @@ class Prey:
         print("Current Location: " + str(self.location))
         
         # get list of neighbors
-        neighbors = graph.get_neighbors(self.location)
+        neighbors = graph.get_node_neighbors(self.location)
         print("Current Neighbors: " + str(neighbors))
 
         # choose location at random while also considering current location

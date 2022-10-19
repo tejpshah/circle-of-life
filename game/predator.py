@@ -15,7 +15,7 @@ class Predator:
             path = queue.pop(0)
             node = path[-1]
             if node not in visited:
-                neighbors = graph.get_neighbors(node)
+                neighbors = graph.get_node_neighbors(node)
                 for neighbor in neighbors:
                     if neighbor == goal:
                         # print("shortest path: " + str(path + [neighbor]))
@@ -29,7 +29,7 @@ class Predator:
 
     def move(self, graph, agent_location):
         # get a list of the predator's neighbors
-        neighbors = graph.get_neighbors(self.location)
+        neighbors = graph.get_node_neighbors(self.location)
 
         # calculate distance from each neighbor to agent
         distances = dict()

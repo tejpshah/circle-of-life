@@ -1,7 +1,4 @@
 import random
-import networkx as nx
-import matplotlib.pyplot as plt
-
 
 class Graph:
     def __init__(self, nodes=50):
@@ -28,11 +25,19 @@ class Graph:
             self.add_edge(i, i+1)
         self.add_edge(1, self.nodes)
 
+    def get_nodes(self):
+        """returns number of nodes in graph"""
+        return self.nodes
+
     def get_degree(self, node):
         """returns particular degree of a node"""
         return len(self.nbrs[node])
 
-    def get_neighbors(self, node):
+    def get_neighbors(self):
+        """returns neighbors"""
+        return self.nbrs
+
+    def get_node_neighbors(self, node):
         """returns neighbors of a node"""
         return self.nbrs[node]
 
@@ -84,17 +89,3 @@ class Graph:
                     self.add_edge(v, w)
                     edges_added += 1
         print(f"The number of edges added is {edges_added}")
-
-    def visualize_graph_circle(self):
-        """visualizes nodes and their edges with labels in a circular layout"""
-        nx.draw_networkx(nx.Graph(self.nbrs), pos=nx.circular_layout(
-            nx.Graph(self.nbrs)), node_size=50, with_labels=True)
-        plt.show()
-
-    def visualize_graph(self, fn='environment.png'):
-        """visualizes nodes and their edges with labels in non-circular layout"""
-        plt.rcParams['figure.figsize'] = [8, 5]
-        G = nx.from_dict_of_lists(self.nbrs)
-        nx.draw(G, with_labels=True)
-        # plt.savefig(fn)
-        plt.show()
