@@ -42,6 +42,10 @@ class Game:
         """
         self.agent.move(self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
+        if self.agent.location == self.prey.location:
+            return 1
+        if self.agent.location == self.predator.location:
+            return -1
 
         self.prey.move(self.graph)
         self.prey_trajectories.append(self.prey.location)
@@ -67,6 +71,10 @@ class Game:
         """
         self.agent.move_debug(self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
+        if self.agent.location == self.prey.location:
+            return 1
+        if self.agent.location == self.predator.location:
+            return -1
 
         self.prey.move_debug(self.graph)
         self.prey_trajectories.append(self.prey.location)
