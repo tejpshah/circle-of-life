@@ -7,7 +7,6 @@ from .graph import Graph
 from .predator import Predator
 from .prey import Prey
 
-
 class Game:
     def __init__(self, nodes=50):
 
