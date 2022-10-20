@@ -1,6 +1,7 @@
 import random
-import matplotlib.pyplot as plt 
-import networkx as nx 
+import matplotlib.pyplot as plt
+import networkx as nx
+
 
 class Graph:
     def __init__(self, nodes=50):
@@ -91,4 +92,3 @@ class Graph:
                     self.add_edge(v, w)
                     edges_added += 1
         # print(f"The number of edges added is {edges_added}")
-    

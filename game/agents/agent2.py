@@ -61,3 +61,25 @@ class Agent2(Agent):
 
         self.location = random.choice(potential_max_moves)
         return 1
+
+    def move_debug(self, graph, prey, predator):
+        optimal_prey_move = self.get_optimal_prey_move(graph, prey)
+        optimal_predator_move = self.get_optimal_predator_move(graph, predator)
+
+        possible_moves = graph.get_node_neighbors(
+            self.location) + [self.location]
+        move_optimality = dict()
+        for move in possible_moves:
+            distance_from_prey = self.bfs(graph, move, optimal_prey_move)
+            distance_from_predator = self.bfs(
+                graph, move, optimal_predator_move)
+            move_optimality[move] = distance_from_prey - distance_from_predator
+
+        maximum_move_optimality = max(move_optimality.values())
+        potential_max_moves = []
+        for move, distance in move_optimality.items():
+            if distance == maximum_move_optimality:
+                potential_max_moves.append(move)
+
+        self.location = random.choice(potential_max_moves)
+        return 1

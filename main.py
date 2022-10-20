@@ -1,5 +1,6 @@
 from game.game import Game
 
+
 def simulation_statistics_agent1(num_simulations, nodes=50):
     """
     run simulation n times and get statistics on success
@@ -18,6 +19,7 @@ def simulation_statistics_agent1(num_simulations, nodes=50):
     print(
         f"Agent1: Wins: {wins}\tLosses: {losses}\tSuccess Rate: {round(success*100,2)}%")
     return round(success*100, 2)
+
 
 def simulation_statistics_agent2(num_simulations, nodes=50):
     """
@@ -38,8 +40,9 @@ def simulation_statistics_agent2(num_simulations, nodes=50):
         f"Agent2: Wins: {wins}\tLosses: {losses}\tSuccess Rate: {round(success*100,2)}%")
     return round(success*100, 2)
 
+
 if __name__ == "__main__":
     g1 = Game(nodes=20)
-    #g1.run_agent_1_debug()
+    # g1.run_agent_1_debug()
     simulation_statistics_agent1(50)
-    #simulation_statistics_agent2(50)
+    # simulation_statistics_agent2(50)

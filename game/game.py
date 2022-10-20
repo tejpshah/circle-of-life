@@ -7,9 +7,9 @@ from .graph import Graph
 from .predator import Predator
 from .prey import Prey
 
+
 class Game:
     def __init__(self, nodes=50):
-
         # initializes the graph on which agents/prey/predator play
         self.graph = Graph(nodes=nodes)
 
@@ -20,7 +20,8 @@ class Game:
         # agent initializes randomly to any spot that is not occupied by predator/prey
         occupied_s = min(self.prey.location, self.predator.location)
         occupied_l = max(self.prey.location, self.predator.location)
-        agent_location_options = list(range(1, occupied_s)) + list(range(occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
+        agent_location_options = list(range(1, occupied_s)) + list(range(
+            occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
         self.agent_starting_location = random.choice(agent_location_options)
 
         # initializes an agent which allows us to call the relevant agent.
@@ -29,7 +30,7 @@ class Game:
         # stores the trajectories of the agent/predator/prey
         self.agent_trajectories = []
         self.prey_trajectories = []
-        self.predator_trajectories = [] 
+        self.predator_trajectories = []
 
     def step(self):
         """
@@ -57,6 +58,7 @@ class Game:
 
     def step_debug(self):
         """
+        -- debug method --
         moves the agent, prey, and predator one step
 
         returns
@@ -64,15 +66,15 @@ class Game:
         * 0 if game in progress
         * -1 if agent looses 
         """
-        self.agent.move(self.graph, self.prey, self.predator)
+        self.agent.move_debug(self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
 
-        self.prey.move(self.graph)
+        self.prey.move_debug(self.graph)
         self.prey_trajectories.append(self.prey.location)
         if self.agent.location == self.prey.location:
             return 1
 
-        self.predator.move(self.graph, self.agent)
+        self.predator.move_debug(self.graph, self.agent)
         self.predator_trajectories.append(self.predator.location)
         if self.agent.location == self.predator.location:
             return -1
@@ -140,9 +142,11 @@ class Game:
         plt.rcParams['figure.figsize'] = [16, 5]
         G = nx.from_dict_of_lists(self.graph.get_neighbors())
         my_pos = nx.spring_layout(G, seed=100)
-        nx.draw(G, pos=my_pos, node_color=self.visualize_graph_color_map(), with_labels=True)
+        nx.draw(G, pos=my_pos,
+                node_color=self.visualize_graph_color_map(), with_labels=True)
 
-        figure_text = "Agent: {}, Prey: {}, Predator: {}".format(self.agent.location, self.prey.location, self.predator.location)
+        figure_text = "Agent: {}, Prey: {}, Predator: {}".format(
+            self.agent.location, self.prey.location, self.predator.location)
         plt.figtext(0.5, 0.05, figure_text, ha="center", fontsize=10)
 
         trajectories = f"Agent: {self.agent_trajectories}\nPrey: {self.prey_trajectories}\nPredator: {self.predator_trajectories}"
@@ -155,5 +159,3 @@ class Game:
         nx.draw_networkx(nx.Graph(self.graph.get_neighbors()), pos=nx.circular_layout(
             nx.Graph(self.graph.get_neighbors())), node_color=self.visualize_graph_color_map(), node_size=50, with_labels=True)
         plt.show()
-
-    
