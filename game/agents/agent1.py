@@ -154,20 +154,16 @@ class Agent1(Agent):
         return 1
 
     def move_debug(self, graph, prey, predator):
-        self.current_distance_from_prey = self.bfs(
-            graph, self.location, prey.location)
-        self.current_distance_from_predator = self.bfs(
-            graph, self.location, predator.location)
+        self.current_distance_from_prey = self.bfs(graph, self.location, prey.location)
+        self.current_distance_from_predator = self.bfs(graph, self.location, predator.location)
 
         self.distance_from_prey = dict()
         self.distance_from_predator = dict()
 
         neighbors = graph.get_node_neighbors(self.location)
         for neighbor in neighbors:
-            self.distance_from_prey[neighbor] = self.bfs(
-                graph, neighbor, prey.location)
-            self.distance_from_predator[neighbor] = self.bfs(
-                graph, neighbor, predator.location)
+            self.distance_from_prey[neighbor] = self.bfs(graph, neighbor, prey.location)
+            self.distance_from_predator[neighbor] = self.bfs(graph, neighbor, predator.location)
 
         print(f"Agent's current location:{self.location}")
         print(f"Predator's current location:{predator.location}")
