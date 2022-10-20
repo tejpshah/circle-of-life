@@ -20,8 +20,7 @@ class Game:
         # agent initializes randomly to any spot that is not occupied by predator/prey
         occupied_s = min(self.prey.location, self.predator.location)
         occupied_l = max(self.prey.location, self.predator.location)
-        agent_location_options = list(range(1, occupied_s)) + list(range(
-            occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
+        agent_location_options = list(range(1, occupied_s)) + list(range(occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
         self.agent_starting_location = random.choice(agent_location_options)
 
         # initializes an agent which allows us to call the relevant agent.
@@ -97,8 +96,9 @@ class Game:
         status = 0
         while status == 0:
             status = self.step_debug()
-            self.visualize_graph()
+            #self.visualize_graph()
 
+        self.visualize_graph_video()
         return status
 
     def run_agent_2(self):
@@ -153,6 +153,45 @@ class Game:
         plt.figtext(0.1, 0.1, trajectories, ha="left", fontsize=8)
 
         plt.show()
+    
+    def visualize_graph_video(self, fn='videos/environment.mp4'):
+        """visualizes nodes and their edges with labels in non-circular layout as a video"""
+        import os
+        plt.rcParams['figure.figsize'] = [16, 10]
+
+        if os.path.exists(fn):
+            os.remove(fn)
+
+        G = nx.from_dict_of_lists(self.graph.get_neighbors())
+        my_pos = nx.spring_layout(G, seed=100)
+
+        for i in range(len(self.agent_trajectories)):
+            plt.clf() # make sure we clear any old stuff
+            agent_location = self.agent_trajectories[min(i, len(self.agent_trajectories)-1)]
+            prey_location = self.prey_trajectories[min(i, len(self.prey_trajectories)-1)]
+            predator_location = self.predator_trajectories[min(i, len(self.predator_trajectories)-1)]
+
+            color_map = ["grey" for _ in self.graph.get_neighbors()]
+            color_map[prey_location - 1] = "yellowgreen"
+            color_map[predator_location - 1] = "lightcoral"
+            color_map[agent_location - 1] = "gold"
+
+            nx.draw(G, pos=my_pos, node_color=color_map, with_labels=True)
+
+            figure_text = "Agent: {}, Prey: {}, Predator: {}".format(
+                agent_location, prey_location, predator_location)
+            plt.figtext(0.5, 0.05, figure_text, ha="center", fontsize=10)
+
+            plt.savefig('figure' + str(i) + '.png') # save this figure to disk
+
+        # now combine all of the figures into a video
+        os.system('ffmpeg -r 3 -i figure%d.png -vcodec mpeg4 -y '+fn)
+        print("A video showing the agent's traversal is ready to view. Opening...")
+        os.system('open '+fn)
+
+        # clean up the environment a bit
+        for i in range(len(self.agent_trajectories)):
+            os.remove('figure' + str(i) + '.png')
 
     def visualize_graph_circle(self):
         """visualizes nodes and their edges with labels in a circular layout"""

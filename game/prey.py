@@ -1,5 +1,8 @@
-import random
+"""
+SANITY CHECKED: PREY SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTION.
+"""
 
+import random
 
 class Prey:
     def __init__(self, location):

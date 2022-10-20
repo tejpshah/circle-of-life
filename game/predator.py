@@ -1,6 +1,9 @@
+"""
+SANITY CHECKED: PREDATOR SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTION.
+"""
+
 import random
 import queue
-
 
 class Predator:
     def __init__(self, location):

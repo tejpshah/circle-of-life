@@ -1,3 +1,7 @@
+"""
+SANITY CHECKED: GRAPH SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTION.
+"""
+
 import random
 import matplotlib.pyplot as plt
 import networkx as nx
