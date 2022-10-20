@@ -1,190 +1,164 @@
-import random
-from .agent import Agent
-
+import random 
+from .agent import Agent 
 
 class Agent1(Agent):
     def __init__(self, location):
-
-        # intializes the location of the agent 
         super().__init__(location)
+        self.curr_prey_dist = 0
+        self.curr_pred_dist = 0 
+        self.nbrs_prey_dist = dict() 
+        self.nbrs_pred_dist = dict()
+    
+    def move(self, graph, prey, predator):
+        self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
+        self.curr_pred_dist = self.bfs(graph, self.location, predator.location)
+        self.nbrs_prey_dist = dict() 
+        self.nbrs_pred_dist = dict()
 
-        # from current location, store dist to prey/predator
-        self.current_distance_from_prey = 0
-        self.current_distance_from_predator = 0
+        nbrs = graph.get_node_neighbors(self.location)
+        for nbr in nbrs: 
+            self.nbrs_prey_dist[nbr] = self.bfs(graph, nbr, prey.location)
+            self.nbrs_pred_dist[nbr] = self.bfs(graph, nbr, predator.location)
+        
+        status1, prey_closer = self.nbrs_closer_to_prey() 
+        status2, pred_farther = self.nbrs_farther_from_pred() 
+        status3, pred_notcloser = self.nbrs_not_closer_to_pred()
+        status4, prey_notfarther = self.nbrs_not_farther_from_prey()
 
-        # store prey/pred distances for each agent neighbors
-        self.distance_from_prey = dict()
-        self.distance_from_predator = dict()
+        seta, setb, candidates = set(), set(), []
+        if status1 and status2:
+            seta, setb = set(prey_closer), set(pred_farther)
+            candidates =  list(seta.intersection(setb))
+        if len(candidates) == 0 and status1 and status3: 
+            seta, setb = set(prey_closer), set(pred_notcloser)
+            candidates =  list(seta.intersection(setb))
+        if len(candidates) == 0 and status4 and status2:
+            seta, setb = set(prey_notfarther), set(pred_farther)
+            candidates =  list(seta.intersection(setb))
+        if len(candidates) == 0 and status4 and status3:
+            seta, setb = set(prey_notfarther), set(pred_notcloser) 
+            candidates =  list(seta.intersection(setb))
+        if len(candidates) == 0 and status2:
+            seta, setb = set(pred_farther), set(pred_farther)
+            candidates =  list(seta.intersection(setb))
+        if len(candidates) == 0 and status3:
+            seta, setb = set(pred_notcloser), set(pred_notcloser) 
+            candidates =  list(seta.intersection(setb))
+        if len(candidates) == 0: 
+            seta.add(self.location)
+            setb.add(self.location)
+            candidates =  list(seta.intersection(setb))
+        self.location = random.choice(candidates)
+        return 1 
 
-    def closer_to_prey(self):
+    def move_debug(self, graph, prey, predator):
+        self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
+        self.curr_pred_dist = self.bfs(graph, self.location, predator.location)
+        self.nbrs_prey_dist = dict() 
+        self.nbrs_pred_dist = dict()
+
+        nbrs = graph.get_node_neighbors(self.location)
+        for nbr in nbrs: 
+            self.nbrs_prey_dist[nbr] = self.bfs(graph, nbr, prey.location)
+            self.nbrs_pred_dist[nbr] = self.bfs(graph, nbr, predator.location)
+        
+        status1, prey_closer = self.nbrs_closer_to_prey() 
+        status2, pred_farther = self.nbrs_farther_from_pred() 
+        status3, pred_notcloser = self.nbrs_not_closer_to_pred()
+        status4, prey_notfarther = self.nbrs_not_farther_from_prey()
+
+        seta, setb, candidates = set(), set(), []
+        if status1 and status2:
+            seta, setb = set(prey_closer), set(pred_farther)
+            candidates =  list(seta.intersection(setb))
+            if len(candidates) > 0: 
+                print("NEIGHBORS THAT ARE CLOSER TO PREY AND FARTHER FROM PREDATOR")
+        if len(candidates) == 0 and status1 and status3: 
+            seta, setb = set(prey_closer), set(pred_notcloser)
+            candidates =  list(seta.intersection(setb))
+            if len(candidates) > 0: 
+                print("NEIGHBORS THAT ARE CLOSER TO PREY AND NOT CLOSER TO THE PREDATOR")
+        if len(candidates) == 0 and status4 and status2:
+            seta, setb = set(prey_notfarther), set(pred_farther)
+            candidates =  list(seta.intersection(setb))
+            if len(candidates) > 0:
+                print("NEIGHBORS THAT ARE NOT FARTHER FROM PREY AND FARTHER FROM PREDATOR")
+        if len(candidates) == 0 and status4 and status3:
+            seta, setb = set(prey_notfarther), set(pred_notcloser) 
+            candidates =  list(seta.intersection(setb))
+            if len(candidates) > 0:
+                print("NEIGHBORS THARE ARE NOT FARTHER FROM THE PREY AND FARTHER FROM PREDATOR")
+        if len(candidates) == 0 and status2:
+            seta, setb = set(pred_farther), set(pred_farther)
+            candidates =  list(seta.intersection(setb))
+            if len(candidates) > 0:
+                print("!NEIGHBORS THAT ARE FARTHER FROM THE PREDATOR")
+        if len(candidates) == 0 and status3:
+            seta, setb = set(pred_notcloser), set(pred_notcloser) 
+            candidates =  list(seta.intersection(setb))
+            if len(candidates) > 0:
+                print("!NEIGHBORS THAT ARE NOT CLOSER TO THE PREDATOR")
+        if len(candidates) == 0: 
+            seta.add(self.location)
+            setb.add(self.location)
+            candidates =  list(seta.intersection(setb))
+            if len(candidates) > 0:
+                print("!SIT STILL AND PRAY")
+
+        print(f"CANDIDATES ARE: {candidates}")
+        self.location = random.choice(candidates)
+        print(f"NEW AGENT LOCATION IS: {self.location}")
+        return 1 
+
+    def nbrs_closer_to_prey(self):
         """
-        neighbors that are closer to the prey have lesser distance to prey than current location
+        returns all possible moves that are of less distance to the prey than current location.
         """
         possible_moves = []
-        shortest_distance_from_prey = min(self.distance_from_prey.values())
-        if shortest_distance_from_prey < self.current_distance_from_prey:
-            for neighbor, distance in self.distance_from_prey.items():
-                if distance == shortest_distance_from_prey:
+        shortest_distance_from_prey = min(self.nbrs_prey_dist.values())
+        if shortest_distance_from_prey < self.curr_prey_dist:
+            for neighbor, distance in self.nbrs_prey_dist.items():
+                if distance < self.curr_prey_dist:
                     possible_moves.append(neighbor)
             return True, possible_moves
         else: return False, possible_moves
-
-    def not_farther_from_prey(self):
+    
+    def nbrs_not_farther_from_prey(self):
+        """
+        returns all possible moves that are of less than or equal distance to the prey than current location.
+        """
         possible_moves = []
+        shortest_distance_from_prey = min(self.nbrs_prey_dist.values())
+        if shortest_distance_from_prey <= self.curr_prey_dist:
+            for neighbor, distance in self.nbrs_prey_dist.items():
+                if distance <= self.curr_prey_dist:
+                    possible_moves.append(neighbor)
+            return True, possible_moves
+        else: return False, possible_moves
+    
+    def nbrs_farther_from_pred(self):
+        """
+        returns all possible moves that are of greater distance to the predator than current location.
+        """
+        possible_moves = [] 
+        maximum_distance_from_pred = max(self.nbrs_pred_dist.values())
+        if maximum_distance_from_pred > self.curr_pred_dist:
+            for neighbor, distance in self.nbrs_pred_dist.items():
+                if distance > self.curr_pred_dist:
+                    possible_moves.append(neighbor)
+            return True, possible_moves
+        else: return False, possible_moves 
 
-        shortest_distance_from_prey = min(self.distance_from_prey.values())
-        if (shortest_distance_from_prey <= self.current_distance_from_prey) == False:
-            return False, possible_moves
+    def nbrs_not_closer_to_pred(self):
+        """
+        returns all possible moves that are of distance greater than or equal to the current distance to predator. 
+        """
+        possible_moves = [] 
+        maximum_distance_from_pred = max(self.nbrs_pred_dist.values())
+        if maximum_distance_from_pred >= self.curr_pred_dist:
+            for neighbor, distance in self.nbrs_pred_dist.items():
+                if distance >= self.curr_pred_dist:
+                    possible_moves.append(neighbor)
+            return True, possible_moves
+        else: return False, possible_moves 
 
-        for neighbor, distance in self.distance_from_prey.items():
-            if distance == shortest_distance_from_prey:
-                possible_moves.append(neighbor)
-
-        return True, possible_moves
-
-    def farther_from_predator(self, possible_moves):
-        filtered_distance_from_predator = dict()
-        for neighbor in possible_moves:
-            filtered_distance_from_predator[neighbor] = self.distance_from_predator.get(
-                neighbor)
-
-        possible_moves = []
-
-        farthest_distance_from_predator = max(
-            filtered_distance_from_predator.values())
-        if not farthest_distance_from_predator > self.current_distance_from_predator:
-            return False, possible_moves
-
-        for neighbor, distance in filtered_distance_from_predator.items():
-            if distance == farthest_distance_from_predator:
-                possible_moves.append(neighbor)
-
-        return True, possible_moves
-
-    def not_closer_to_predator(self, possible_moves):
-        filtered_distance_from_predator = dict()
-        for neighbor in possible_moves:
-            filtered_distance_from_predator[neighbor] = self.distance_from_predator.get(
-                neighbor)
-
-        possible_moves = []
-
-        farthest_distance_from_predator = max(
-            filtered_distance_from_predator.values())
-        if not farthest_distance_from_predator >= self.current_distance_from_predator:
-            return False, possible_moves
-
-        for neighbor, distance in filtered_distance_from_predator.items():
-            if distance == farthest_distance_from_predator:
-                possible_moves.append(neighbor)
-
-        return True, possible_moves
-
-    def move_condition_1_2(self):
-        success, neighbors_closer_to_prey = self.closer_to_prey()
-        if not success:
-            return False
-
-        success, neighbors_farther_from_predator = self.farther_from_predator(
-            neighbors_closer_to_prey)
-        if success:
-            self.location = random.choice(neighbors_farther_from_predator)
-            return True
-
-        success, neighbors_not_closer_to_predator = self.not_closer_to_predator(
-            neighbors_closer_to_prey)
-        if success:
-            self.location = random.choice(neighbors_not_closer_to_predator)
-            return True
-
-        return False
-
-    def move_condition_3_4(self):
-        success, neighbors_not_farther_from_prey = self.not_farther_from_prey()
-        if not success:
-            return False
-
-        success, neighbors_farther_from_predator = self.farther_from_predator(
-            neighbors_not_farther_from_prey)
-        if success:
-            self.location = random.choice(neighbors_farther_from_predator)
-            return True
-
-        success, neighbors_not_closer_to_predator = self.not_closer_to_predator(
-            neighbors_not_farther_from_prey)
-        if success:
-            self.location = random.choice(neighbors_not_closer_to_predator)
-            return True
-
-        return False
-
-    def move_condition_5_6(self):
-        success, neighbors_farther_from_predator = self.farther_from_predator(
-            self.distance_from_predator.keys())
-        if success:
-            self.location = random.choice(neighbors_farther_from_predator)
-            return True
-
-        success, neighbors_not_closer_to_predator = self.not_closer_to_predator(
-            self.distance_from_predator.keys())
-        if success:
-            self.location = random.choice(neighbors_not_closer_to_predator)
-            return True
-
-        return False
-
-    def move(self, graph, prey, predator):
-        self.current_distance_from_prey = self.bfs(graph, self.location, prey.location)
-        self.current_distance_from_predator = self.bfs(graph, self.location, predator.location)
-
-        self.distance_from_prey = dict()
-        self.distance_from_predator = dict()
-
-        neighbors = graph.get_node_neighbors(self.location)
-        for neighbor in neighbors:
-            self.distance_from_prey[neighbor] = self.bfs(graph, neighbor, prey.location)
-            self.distance_from_predator[neighbor] = self.bfs(graph, neighbor, predator.location)
-
-        if self.move_condition_1_2():
-            return 1
-        elif self.move_condition_3_4():
-            return 1
-        elif self.move_condition_5_6():
-            return 1
-
-        return 1
-
-    def move_debug(self, graph, prey, predator):
-
-        print(f"\nAgent's current location:{self.location}")
-        print(f"Predator's current location:{predator.location}")
-        print(f"Prey's current location:{prey.location}")
-
-        self.current_distance_from_prey = self.bfs(graph, self.location, prey.location)
-        self.current_distance_from_predator = self.bfs(graph, self.location, predator.location)
-
-        print(f"\nCurrent distance to prey:{self.current_distance_from_prey}")
-        print(f"Current distance to predator:{self.current_distance_from_predator}")
-
-        self.distance_from_prey = dict()
-        self.distance_from_predator = dict()
-
-        neighbors = graph.get_node_neighbors(self.location)
-        for neighbor in neighbors:
-            self.distance_from_prey[neighbor] = self.bfs(graph, neighbor, prey.location)
-            self.distance_from_predator[neighbor] = self.bfs(graph, neighbor, predator.location)
-
-        print(f"\nDistance from prey hashmap:{self.distance_from_prey}")
-        print(f"Distance from predator hashmap:{self.distance_from_predator}")
-
-
-        if self.move_condition_1_2():
-            print("MOVE CONDITION 1,2")
-            return 1
-        elif self.move_condition_3_4():
-            print("MOVE CONDITION 3,4")
-            return 1
-        elif self.move_condition_5_6():
-            print("MOVE CONDITION 5,6")
-            return 1
-        return 1
