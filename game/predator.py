@@ -35,7 +35,10 @@ class Predator:
         return -1
 
     def move(self, graph, agent):
-    
+        """
+        moves the agent to the neighbor with minimum BFS distance to agent. 
+        """
+
         agent_location = agent.location
 
         # get a list of the predator's neighbors
@@ -63,6 +66,9 @@ class Predator:
         self.location = new_location
 
     def move_debug(self, graph, agent):
+        """
+        debug method moving predator to the best location of the neighbor with minimal distance to agent. 
+        """
         print("\nPredator's Move")
 
         agent_location = agent.location
