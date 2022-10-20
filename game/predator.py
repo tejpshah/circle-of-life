@@ -30,7 +30,6 @@ class Predator:
                     dist[nbr], prev[nbr] = dist[node] + 1, node 
                     if goal == nbr:  
                         return dist[nbr] 
-
                     queue.append(nbr)
         return -1
 
