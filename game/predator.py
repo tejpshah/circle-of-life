@@ -11,7 +11,7 @@ class Predator:
         runs BFS on a start to end node and returns the distance to the goal. 
         also stores the previous pointers along the path which can be retrieved to reconstruct the path. 
         """
-        # Create queue and enqueue source
+        # create queue and enqueue source
         queue = [source]
 
         # create a dist hashmap to store distance between nodes
