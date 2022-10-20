@@ -67,6 +67,17 @@ class Agent1(Agent):
         status3, pred_notcloser = self.nbrs_not_closer_to_pred()
         status4, prey_notfarther = self.nbrs_not_farther_from_prey()
 
+        print(f"AGENT'S CURRENT LOCATION{self.location}")
+        print(f"AGENT'S NEIGHBORS{nbrs}")
+        print(f"CURRENT DISTANCE TO PREY: {self.curr_prey_dist}")
+        print(f"CURRENT DISTANCE TO PRED: {self.curr_pred_dist}")
+        print(f"PREY DISTANCES FROM NEIGHBORS: {self.nbrs_prey_dist}")
+        print(f"PRED DISTANCES FROM NEIGHBORS: {self.nbrs_pred_dist}")
+        print(f"status1:{status1}\tprey_closer:{prey_closer}")
+        print(f"status2:{status2}\tpred_farther:{pred_farther}")
+        print(f"status3:{status3}\tpred_notcloser:{pred_notcloser}")
+        print(f"status4:{status4}\tprey_notfarther:{prey_notfarther}")
+
         seta, setb, candidates = set(), set(), []
         if status1 and status2:
             seta, setb = set(prey_closer), set(pred_farther)
