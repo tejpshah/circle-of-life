@@ -121,6 +121,12 @@ class Game:
         return status
 
     def visualize_graph_color_map(self):
+        """
+        grey : unoccupied node
+        green : node of prey 
+        yellow: node of agent 
+        red: node of prey 
+        """
         color_map = ["grey" for _ in self.graph.get_neighbors()]
         color_map[self.prey.location - 1] = "yellowgreen"
         color_map[self.predator.location - 1] = "lightcoral"

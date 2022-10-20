@@ -23,3 +23,4 @@ But, each edge needs two nodes, so 50/2 = 25 max nodes
 - Sanity Check Complete: The implementation of graph is working as specified according to the writeup. 
 - Sanity Check Complete: The implementation of prey is working as specified according to the writeup. 
 - Sanity Check Complete: BFS in predator had exponential space time complexity. I made space complexity linear and stores previous pointers too.
+- Sanity Check Complete: The game class looks good. Added extra functionality for debugging which stores the trajectories on the screen plus made game window bigger. 
