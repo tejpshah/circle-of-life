@@ -17,10 +17,9 @@ class Game:
 
         occupied_s = min(self.prey.location, self.predator.location)
         occupied_l = max(self.prey.location, self.predator.location)
-        agent_location_options = list(range(1, occupied_s)) + list(range(
-            occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
-        self.agent_starting_location = random.choice(agent_location_options)
 
+        agent_location_options = list(range(1, occupied_s)) + list(range(occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
+        self.agent_starting_location = random.choice(agent_location_options)
         self.agent = None
 
     def step(self):
@@ -44,6 +43,27 @@ class Game:
 
         return 0
 
+    def step_debug(self):
+        """
+        moves the agent, prey, and predator one step
+
+        returns
+        * 1 if agent wins
+        * 0 if game in progress
+        * -1 if agent looses 
+        """
+        self.agent.move(self.graph, self.prey, self.predator)
+
+        self.prey.move_debug(self.graph)
+        if self.agent.location == self.prey.location:
+            return 1
+
+        self.predator.move_debug(self.graph, self.agent)
+        if self.agent.location == self.predator.location:
+            return -1
+
+        return 0
+
     def run_agent_1(self):
         self.agent = Agent1(self.agent_starting_location)
 
@@ -59,7 +79,7 @@ class Game:
 
         status = 0
         while status == 0:
-            status = self.step()
+            status = self.step_debug()
             self.visualize_graph()
 
         return status
@@ -79,7 +99,7 @@ class Game:
 
         status = 0
         while status == 0:
-            status = self.step()
+            status = self.step_debug()
             self.visualize_graph()
 
         return status
@@ -99,8 +119,7 @@ class Game:
         plt.rcParams['figure.figsize'] = [8, 5]
         G = nx.from_dict_of_lists(self.graph.get_neighbors())
         my_pos = nx.spring_layout(G, seed=100)
-        nx.draw(G, pos=my_pos,
-                node_color=self.visualize_graph_color_map(), with_labels=True)
+        nx.draw(G, pos=my_pos, node_color=self.visualize_graph_color_map(), with_labels=True)
 
         figure_text = "Agent: {}, Prey: {}, Predator: {}".format(
             self.agent.location, self.prey.location, self.predator.location)
@@ -113,3 +132,5 @@ class Game:
         nx.draw_networkx(nx.Graph(self.graph.get_neighbors()), pos=nx.circular_layout(
             nx.Graph(self.graph.get_neighbors())), node_color=self.visualize_graph_color_map(), node_size=50, with_labels=True)
         plt.show()
+
+    

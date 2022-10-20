@@ -1,4 +1,6 @@
 import random
+import matplotlib.pyplot as plt 
+import networkx as nx 
 
 
 class Graph:
@@ -90,3 +92,11 @@ class Graph:
                     self.add_edge(v, w)
                     edges_added += 1
         # print(f"The number of edges added is {edges_added}")
+    
+    def visualize_graph(self, fn='environment.png'):
+        """visualizes nodes and their edges with labels in non-circular layout"""
+        plt.rcParams['figure.figsize'] = [8, 5]
+        G = nx.from_dict_of_lists(self.get_neighbors())
+        my_pos = nx.spring_layout(G, seed=100)
+        nx.draw(G, pos=my_pos, with_labels=True)
+        plt.show()
