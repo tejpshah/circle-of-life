@@ -76,12 +76,12 @@ class Game:
         if self.agent.location == self.predator.location:
             return -1
 
-        self.prey.move_debug(self.graph)
+        self.prey.move(self.graph)
         self.prey_trajectories.append(self.prey.location)
         if self.agent.location == self.prey.location:
             return 1
 
-        self.predator.move_debug(self.graph, self.agent)
+        self.predator.move(self.graph, self.agent)
         self.predator_trajectories.append(self.predator.location)
         if self.agent.location == self.predator.location:
             return -1
@@ -99,12 +99,12 @@ class Game:
 
     def run_agent_1_debug(self):
         self.agent = Agent1(self.agent_starting_location)
-        self.visualize_graph()
+        #self.visualize_graph()
 
         status = 0
         while status == 0:
             status = self.step_debug()
-            #self.visualize_graph()
+            self.visualize_graph()
 
         self.visualize_graph_video()
         return status

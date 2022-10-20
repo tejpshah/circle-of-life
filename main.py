@@ -42,7 +42,7 @@ def simulation_statistics_agent2(num_simulations, nodes=50):
 
 
 if __name__ == "__main__":
-    g1 = Game(nodes=20)
-    # g1.run_agent_1_debug()
-    simulation_statistics_agent1(50)
+    g1 = Game(nodes=50)
+    g1.run_agent_1_debug()
+    #simulation_statistics_agent1(50)
     # simulation_statistics_agent2(50)
