@@ -3,6 +3,7 @@ from .agent import Agent
 
 class Agent1(Agent):
     def __init__(self, location):
+        """stores current distances to prey/pred and nbrs dist to prey/pred"""
         super().__init__(location)
         self.curr_prey_dist = 0
         self.curr_pred_dist = 0 
@@ -10,6 +11,7 @@ class Agent1(Agent):
         self.nbrs_pred_dist = dict()
     
     def move(self, graph, prey, predator):
+        """updates location based on assignment specifications given."""
         self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
         self.curr_pred_dist = self.bfs(graph, self.location, predator.location)
         self.nbrs_prey_dist = dict() 
@@ -52,6 +54,7 @@ class Agent1(Agent):
         return 1 
 
     def move_debug(self, graph, prey, predator):
+        """debug version of moving A1"""
         self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
         self.curr_pred_dist = self.bfs(graph, self.location, predator.location)
         self.nbrs_prey_dist = dict() 
