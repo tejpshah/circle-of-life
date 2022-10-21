@@ -2,7 +2,6 @@ import random
 from .agent1 import Agent1
 from game.prey import Prey
 
-
 class Agent3(Agent1):
     def __init__(self, location, graph):
         super().__init__(location)

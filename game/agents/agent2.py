@@ -11,12 +11,12 @@ class Agent2(Agent):
 
     def get_nbrs_min_prey_dist(self):
         """retrieves all nbrs of minimal length to prey"""
-        min_dist_to_pred = float("inf")
+        min_dist_to_prey = float("inf")
         for value in self.nbrs_pred_dist.values():
-            min_dist_to_pred = min(min_dist_to_pred, value)
+            min_dist_to_prey = min(min_dist_to_prey, value)
         potential_candidates_prey = [] 
         for key, value in self.nbrs_pred_dist.items():
-            if value == min_dist_to_pred: 
+            if value == min_dist_to_prey: 
                 potential_candidates_prey.append(key)
         return potential_candidates_prey
 
