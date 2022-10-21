@@ -26,7 +26,11 @@ def labreport_simulation_statistics_agent2():
 
 if __name__ == "__main__":
     # simulation_statistics_agent1(10000)
-    # labreport_simulation_statistics_agent1()
-    # simulation_statistics_agent2(50)
+    labreport_simulation_statistics_agent1()
+    labreport_simulation_statistics_agent2()
+    #simulation_statistics.agent1(50)
+    #simulation_statistics.agent2(50)
 
-    simulation_statistics.agent3(1, 10)
+
+
+    #simulation_statistics.agent3(1, 10)

@@ -10,8 +10,7 @@ class Agent3(Agent1):
         # initialize belief state such that there is equal probability that the prey is in every node except the agent's current one
         self.belief_state = dict()
         for i in range(1, graph.get_nodes() + 1):
-            self.belief_state[i] = 1 / \
-                (graph.get_nodes() - 1) if i != location else 0
+            self.belief_state[i] = 1 / (graph.get_nodes() - 1) if i != location else 0
 
         # stores where prey was if we found it in the previous ste
         # starts at -1 to indicate we did not start yet
@@ -88,7 +87,7 @@ class Agent3(Agent1):
             print(f'UPDATED BELIEF STATE: {self.belief_state}')
 
             # sanity check that the belief state probabilities add up to 1
-            # assert sum(self.belief_state.values()) == 1
+            assert sum(self.belief_state.values()) == 1
 
             # select potential prey position and move according to the rules of agent 1
             highest_prob_nodes = self.get_highest_prob_nodes()

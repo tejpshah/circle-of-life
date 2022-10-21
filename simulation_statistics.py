@@ -58,3 +58,6 @@ def agent3(num_simulations, nodes=50):
     print(
         f"Agent3: Wins: {wins}\tLosses: {losses}\tSuccess Rate: {round(success*100,2)}%")
     return round(success*100, 2)
+
+#g1 = Game(nodes=50)
+#g1.run_agent_2_debug()

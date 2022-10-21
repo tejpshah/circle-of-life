@@ -1,85 +1,84 @@
-import random
+import random 
 from .agent import Agent
 
-
 class Agent2(Agent):
+
     def __init__(self, location):
+        """initializes with same starting information as A1"""
         super().__init__(location)
+        self.nbrs_prey_dist = dict() 
+        self.nbrs_pred_dist = dict()
 
-    def get_optimal_prey_move(self, graph, prey):
-        neighbors = graph.get_node_neighbors(prey.location)
-        distance_from_agent = dict()
-        for neighbor in neighbors:
-            distance_from_agent[neighbor] = self.bfs(
-                graph, neighbor, self.location)
-
-        maximum_distance_neighbors = max(distance_from_agent.values())
-        if maximum_distance_neighbors < self.bfs(graph, prey.location, self.location):
-            return prey.location
-
-        potential_max_moves = []
-        for neighbor, distance in distance_from_agent.items():
-            if distance == maximum_distance_neighbors:
-                potential_max_moves.append(neighbor)
-
-        return random.choice(potential_max_moves)
-
-    def get_optimal_predator_move(self, graph, predator):
-        neighbors = graph.get_node_neighbors(predator.location)
-        distance_from_agent = dict()
-        for neighbor in neighbors:
-            distance_from_agent[neighbor] = self.bfs(
-                graph, neighbor, self.location)
-
-        minimum_distance_neighbors = min(distance_from_agent.values())
-
-        potential_min_moves = []
-        for neighbor, distance in distance_from_agent.items():
-            if distance == minimum_distance_neighbors:
-                potential_min_moves.append(neighbor)
-
-        return random.choice(potential_min_moves)
+    def get_nbrs_min_prey_dist(self):
+        """retrieves all nbrs of minimal length to prey"""
+        min_dist_to_pred = float("inf")
+        for value in self.nbrs_pred_dist.values():
+            min_dist_to_pred = min(min_dist_to_pred, value)
+        potential_candidates_prey = [] 
+        for key, value in self.nbrs_pred_dist.items():
+            if value == min_dist_to_pred: 
+                potential_candidates_prey.append(key)
+        return potential_candidates_prey
 
     def move(self, graph, prey, predator):
-        optimal_prey_move = self.get_optimal_prey_move(graph, prey)
-        optimal_predator_move = self.get_optimal_predator_move(graph, predator)
+        """
+        keep taking the neighbor that that minimizes the distance to the prey 
+        if the predator is a distance of 2 edges away, choose the neighbor that maximizes distance away from predator. 
+        """
+        self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
+        self.curr_pred_dist = self.bfs(graph, self.location, predator.location)
+        self.nbrs_prey_dist = dict() 
+        self.nbrs_pred_dist = dict()
 
-        possible_moves = graph.get_node_neighbors(
-            self.location) + [self.location]
-        move_optimality = dict()
-        for move in possible_moves:
-            distance_from_prey = self.bfs(graph, move, optimal_prey_move)
-            distance_from_predator = self.bfs(
-                graph, move, optimal_predator_move)
-            move_optimality[move] = distance_from_prey - distance_from_predator
+        nbrs = graph.get_node_neighbors(self.location)
+        for nbr in nbrs: 
+            self.nbrs_prey_dist[nbr] = self.bfs(graph, nbr, prey.location)
+            self.nbrs_pred_dist[nbr] = self.bfs(graph, nbr, predator.location)
 
-        maximum_move_optimality = max(move_optimality.values())
-        potential_max_moves = []
-        for move, distance in move_optimality.items():
-            if distance == maximum_move_optimality:
-                potential_max_moves.append(move)
-
-        self.location = random.choice(potential_max_moves)
-        return 1
-
+        nbrs_min_dist_prey = self.get_nbrs_min_prey_dist()
+        if self.curr_pred_dist <= 2 or len(nbrs_min_dist_prey) == 0: 
+            """move away maximally from nearest predator"""
+            max_dist_to_pred = -float("inf")
+            for value in self.nbrs_pred_dist.values():
+                max_dist_to_pred = max(max_dist_to_pred, value)
+            for key, value in self.nbrs_pred_dist.items():
+                if value == max_dist_to_pred: 
+                    self.location = key 
+                    break 
+        elif len(nbrs_min_dist_prey) >= 1: 
+            """choose the candidate option that was given """
+            self.location = nbrs_min_dist_prey[0]
+        return 1 
+        
     def move_debug(self, graph, prey, predator):
-        optimal_prey_move = self.get_optimal_prey_move(graph, prey)
-        optimal_predator_move = self.get_optimal_predator_move(graph, predator)
+        """
+        debug version
+        keep taking the neighbor that that minimizes the distance to the prey 
+        if the predator is a distance of 2 edges away, choose the neighbor that maximizes distance away from predator. 
+        """
+        self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
+        self.curr_pred_dist = self.bfs(graph, self.location, predator.location)
+        self.nbrs_prey_dist = dict() 
+        self.nbrs_pred_dist = dict()
 
-        possible_moves = graph.get_node_neighbors(
-            self.location) + [self.location]
-        move_optimality = dict()
-        for move in possible_moves:
-            distance_from_prey = self.bfs(graph, move, optimal_prey_move)
-            distance_from_predator = self.bfs(
-                graph, move, optimal_predator_move)
-            move_optimality[move] = distance_from_prey - distance_from_predator
+        nbrs = graph.get_node_neighbors(self.location)
+        for nbr in nbrs: 
+            self.nbrs_prey_dist[nbr] = self.bfs(graph, nbr, prey.location)
+            self.nbrs_pred_dist[nbr] = self.bfs(graph, nbr, predator.location)
 
-        maximum_move_optimality = max(move_optimality.values())
-        potential_max_moves = []
-        for move, distance in move_optimality.items():
-            if distance == maximum_move_optimality:
-                potential_max_moves.append(move)
-
-        self.location = random.choice(potential_max_moves)
-        return 1
+        nbrs_min_dist_prey = self.get_nbrs_min_prey_dist()
+        if self.curr_pred_dist <= 2 or len(nbrs_min_dist_prey) == 0: 
+            """move away maximally from nearest predator"""
+            print("move away maximally from nearest predator")
+            max_dist_to_pred = -float("inf")
+            for value in self.nbrs_pred_dist.values():
+                max_dist_to_pred = max(max_dist_to_pred, value)
+            for key, value in self.nbrs_pred_dist.items():
+                if value == max_dist_to_pred: 
+                    self.location = key 
+                    break 
+        elif len(nbrs_min_dist_prey) >= 1: 
+            """choose the candidate option that was given"""
+            print("choose the candidate option that was given")
+            self.location = nbrs_min_dist_prey[0]
+        return 1 
