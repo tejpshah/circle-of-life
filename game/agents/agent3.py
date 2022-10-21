@@ -9,11 +9,14 @@ class Agent3(Agent1):
         # initialize belief state such that there is equal probability that the prey is in every node except the agent's current one
         self.belief_state = dict()
         for i in range(1, graph.get_nodes() + 1):
-            self.belief_state[i] = 1 / (graph.get_nodes() - 1) if i != location else 0
+            self.belief_state[i] = 1 / (graph.get_nodes() - 1) if i != self.location else 0
 
         # stores where prey was if we found it in the previous ste
         # starts at -1 to indicate we did not start yet
         self.prev_prey_location = -1
+
+        # stores the num of times agent knows exactly where prey is
+        num_times_know_exactly_where_prey_is = 0 
 
         print(f'GRAPH NEIGHBORS: {graph.get_neighbors()}')
 
