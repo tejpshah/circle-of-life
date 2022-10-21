@@ -3,6 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from game.agents.agent1 import Agent1
 from game.agents.agent2 import Agent2
+from game.agents.agent3 import Agent3
 from .graph import Graph
 from .predator import Predator
 from .prey import Prey
@@ -126,6 +127,15 @@ class Game:
             self.visualize_graph()
 
         return status
+
+    def run_agent_3(self):
+        self.agent = Agent3(self.agent_starting_location, self.graph)
+        self.step()
+        # status = 0
+        # while status == 0:
+        #     status = self.step()
+
+        return 0
 
     def visualize_graph_color_map(self):
         """
