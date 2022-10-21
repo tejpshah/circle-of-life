@@ -1,48 +1,31 @@
-from game.game import Game
+import simulation_statistics as simulation_statistics
 
 
-def simulation_statistics_agent1(num_simulations, nodes=50):
-    """
-    run simulation n times and get statistics on success
-    """
-    agent_success = []
-    for _ in range(num_simulations):
-        game = Game(nodes)
-        game_success = game.run_agent_1()
+def labreport_simulation_statistics_agent1():
+    success_rates = []
+    for _ in range(30):
+        simulation_success = simulation_statistics.agent1(100, 50)
+        success_rates.append(simulation_success)
 
-        # agent caught the prey = 1, predator caught the agent = 0
-        agent_success.append(1 if game_success == 1 else 0)
-
-    wins = sum(agent_success)
-    losses = len(agent_success) - wins
-    success = wins/(wins + losses)
+    average = sum(success_rates) / len(success_rates)
     print(
-        f"Agent1: Wins: {wins}\tLosses: {losses}\tSuccess Rate: {round(success*100,2)}%")
-    return round(success*100, 2)
+        f"Agent1: Overall Success Rate: {round(average,2)}%")
+    return round(average, 2)
 
 
-def simulation_statistics_agent2(num_simulations, nodes=50):
-    """
-    run simulation n times and get statistics on success
-    """
-    agent_success = []
-    for _ in range(num_simulations):
-        game = Game(nodes)
-        game_success = game.run_agent_2()
+def labreport_simulation_statistics_agent2():
+    success_rates = []
+    for _ in range(30):
+        simulation_success = simulation_statistics.agent2(100, 50)
+        success_rates.append(simulation_success)
 
-        # agent caught the prey = 1, predator caught the agent = 0
-        agent_success.append(1 if game_success == 1 else 0)
-
-    wins = sum(agent_success)
-    losses = len(agent_success) - wins
-    success = wins/(wins + losses)
+    average = sum(success_rates) / len(success_rates)
     print(
-        f"Agent2: Wins: {wins}\tLosses: {losses}\tSuccess Rate: {round(success*100,2)}%")
-    return round(success*100, 2)
+        f"Agent2: Overall Success Rate: {round(average,2)}%")
+    return round(average, 2)
 
 
 if __name__ == "__main__":
-    g1 = Game(nodes=50)
-    #g1.run_agent_1_debug()
-    simulation_statistics_agent1(10000)
+    # simulation_statistics_agent1(10000)
+    labreport_simulation_statistics_agent1()
     # simulation_statistics_agent2(50)
