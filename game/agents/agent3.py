@@ -13,6 +13,9 @@ class Agent3(Agent1):
             self.belief_state[i] = 1 / \
                 (graph.get_nodes() - 1) if i != location else 0
 
+        # stores whether prey was found in the previous step and, if so, where
+        self.prey_prev_location = (False, None)
+
     def get_highest_prob_nodes(self):
         """
         gets nodes that have the highest probability of containing the prey
@@ -26,6 +29,10 @@ class Agent3(Agent1):
         return highest_prob_nodes
 
     def move(self, graph, prey, predator):
+        # TODO: need to regenerate the belief state based on current status
+        # basically, where our current position is 0 and then update the other ones accordingly
+        # if agent was last found, update it such that those positions are now 1/3 or 1/4 probability
+
         # choose node to survey based on the nodes with the highest probability of containing the prey
         survey_node = random.choice(self.get_highest_prob_nodes())
         prey_found = True if prey.location == survey_node else False
@@ -37,6 +44,8 @@ class Agent3(Agent1):
 
             # move according to the rules of agent 1
             super().move(graph, prey.location, predator)
+
+            self.prey_prev_location = (True, prey.location)
 
             return 1
         else:
@@ -53,6 +62,8 @@ class Agent3(Agent1):
             highest_prob_nodes = self.get_highest_prob_nodes()
             potential_prey = Prey(random.choice(highest_prob_nodes))
             super().move(graph, potential_prey, predator)
+
+            self.prey_prev_location = (False, None)
 
             return 1
 
