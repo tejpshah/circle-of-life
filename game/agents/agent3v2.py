@@ -1,6 +1,7 @@
 import random
 from .agent1 import Agent1
 from game.prey import Prey
+from copy import deepcopy
 
 class Agent3(Agent1):
     def __init__(self, location, graph):
@@ -14,8 +15,11 @@ class Agent3(Agent1):
         # a list that stores the prey's previous locations whenever it is completely known for sure 
         self.prey_prev_locations = [] 
 
-        # the number of timesteps since the agent was last seen 
-        self.num_timesteps_since_prey_last_seen = float("inf")
+        # keeps track of the nodes that we need in frontier for redistributing probability mass
+        self.frontier = set() 
+
+        # keeps track of counts and frequencies for redistributing the probability mass
+        self.counts = dict() 
 
     def get_highest_prob_nodes(self):
         """gets nodes that have the highest probability of containing the prey"""
@@ -36,22 +40,22 @@ class Agent3(Agent1):
         return signal, node 
 
     def update_probs_with_bayes(self, highest_prob_node):
-        # P(n_i = True | n_curr = False) = P(n_i = True) * P(n_curr = False | n_i = True) / P(n_curr = False)
-        # P(n_i = True | n_curr = False) = P(n_i = True) * 1 / P(n_curr = False)
-        # P(n_i = True | n_curr = False) = P(n_i = True) * 1 / (1-P(n_curr = True))
-        # avoid divide by zero errors if at any point denom becomes arbitrarily close to 0
-
+        """
+        P(n_i = True | n_curr = False) = P(n_i = True) * P(n_curr = False | n_i = True) / P(n_curr = False)
+        P(n_i = True | n_curr = False) = P(n_i = True) * 1 / P(n_curr = False)
+        P(n_i = True | n_curr = False) = P(n_i = True) * 1 / (1-P(n_curr = True))
+        avoid divide by zero errors if at any point denom becomes arbitrarily close to 0
+        """
         denominator = min(1 - self.beliefs[highest_prob_node], 0.0001)
         for node, prior in self.beliefs.items():
-            if node == self.location: self.beliefs[node] = 0 
+            if node == self.location or node == highest_prob_node: self.beliefs[node] = 0 
             else: self.beliefs[node] = prior / denominator 
 
-    def update_probs_found_prey(self):
-         """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
+    def update_probs_found_prey(self, highest_prob_node):
+        """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
         for node, belief in self.beliefs.items():
-            self.beliefs[node] = 0 if node != self.location else 1 
-        self.num_timesteps_since_prey_last_seen = 0 
-
+            self.beliefs[node] = 0 if node != highest_prob_node else 1 
+        self.frontier.add(highest_prob_node)
 
     def move(self, graph, prey, predator):
         """
@@ -69,12 +73,30 @@ class Agent3(Agent1):
 
         elif signal == True and len(self.prey_prev_locations) > 0 : 
             """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
-            self.update_probs_found_prey()
-            
+            self.update_probs_found_prey(highest_prob_node)
+
         elif signal == False and len(self.prey_prev_locations) > 0:
             """redistribute the probability mass based on the number of timesteps since last seen""" 
-
             
+            new_frontier = set() 
+            for node in self.frontier:  
+                self.counts[node] = self.counts.get(node,0) + 1 
+                new_frontier.add(node)
+                for nbr in graph.nbrs[node]:
+                    self.counts[nbr] = self.counts.get(nbr,0) + 1 
+                    new_frontier.add(nbr)
+            self.frontier = new_frontier
+
+            probability_mass = deepcopy(self.counts)
+            probability_mass[self.location] = 0
+            probability_mass[highest_prob_node] = 0 
+
+            normalization_denominator = sum(probability_mass.values())
+            for key in probability_mass.keys():
+                self.beliefs[key] = probability_mass[key] / normalization_denominator
+
+
+
 
 
         else: 
