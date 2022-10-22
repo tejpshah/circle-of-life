@@ -29,7 +29,6 @@ class Agent3(Agent1):
         for node, prob in self.belief_state.items():
             if prob == highest_prob:
                 highest_prob_nodes.append(node)
-
         return highest_prob_nodes
 
     def move(self, graph, prey, predator):
@@ -38,8 +37,7 @@ class Agent3(Agent1):
             # because we found the prey last time, we need to update the probabilities to reflect the prey's potential locations
             print(
                 "FOUND PREY PREVIOUSLY, UPDATING PROBABILITIES BASED ON POSSIBLE PREY MOVES")
-            prey_possible_moves = graph.get_node_neighbors(
-                self.prev_prey_location) + [self.prev_prey_location]
+            prey_possible_moves = graph.get_node_neighbors(self.prev_prey_location) + [self.prev_prey_location]
             if self.location in prey_possible_moves:
                 prey_possible_moves.remove(self.location)
 
