@@ -9,8 +9,10 @@ class Agent3(Agent1):
         # initializes A3 with given location 
         super().__init__(location)
 
+        print(1 / graph.get_nodes()-1)
+
         # intializes belief states to be 1 / (N-1) for probability of prey for every cell that is not the agent
-        self.beliefs = {i:round((1/graph.get_nodes()-1), 4) for i in range(1, graph.get_nodes()+1) if i != self.location}
+        self.beliefs = {i:round((1/ (graph.get_nodes()-1)), 4) for i in range(1, graph.get_nodes()+1) if i != self.location}
 
         print(self.beliefs)
 
@@ -48,10 +50,10 @@ class Agent3(Agent1):
         P(n_i = True | n_curr = False) = P(n_i = True) * 1 / (1-P(n_curr = True))
         avoid divide by zero errors if at any point denom becomes arbitrarily close to 0
         """
-        denominator = min(1 - self.beliefs[highest_prob_node], 0.0001)
+        denominator = max(1 - self.beliefs[highest_prob_node], 0.0001)
         for node, prior in self.beliefs.items():
             if node == self.location or node == highest_prob_node: self.beliefs[node] = 0 
-            else: self.beliefs[node] = prior / denominator 
+            else: self.beliefs[node] = round(prior / denominator, 4)
 
     def update_probs_found_prey(self, highest_prob_node):
         """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
@@ -77,7 +79,7 @@ class Agent3(Agent1):
 
         normalization_denominator = sum(probability_mass.values())
         for key in probability_mass.keys():
-            self.beliefs[key] = probability_mass[key] / normalization_denominator
+            self.beliefs[key] = round(probability_mass[key] / normalization_denominator, 4)
 
 
     def move(self, graph, prey, predator):
@@ -88,19 +90,21 @@ class Agent3(Agent1):
             # if the current timestep's signal is the prey, update all the proabilities: {0,0,...,1,...,0}
             # otherwise, propogate probability mass of beliefs to neighbors, neighbors of neighbors, and so on (modified bfs)
         """
-        print(self.beliefs)
         signal, highest_prob_node = self.get_signal_prey_exists(prey)
 
         if len(self.prey_prev_locations) == 0: 
             """while we do not know where the prey is, update the probabilities of all nodes with Bayes Rule"""
             self.update_probs_with_bayes(highest_prob_node)
+            print(f"UPDATING WITH BAYES RULE:{self.beliefs}\n")
 
         elif signal == True and len(self.prey_prev_locations) > 0 : 
             """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
             self.update_probs_found_prey(highest_prob_node)
+            print(f"FOUND PREY:{self.beliefs}\n")
 
         elif signal == False and len(self.prey_prev_locations) > 0:
             """redistribute the probability mass based on the number of timesteps since last seen""" 
+            print(f"PROPOGATE PREY BELIEFS:{self.beliefs}\n")
             self.update_probs_found_prey_distribute_probability(graph, highest_prob_node)
 
         # select potential prey position and move according to the rules of agent 1
