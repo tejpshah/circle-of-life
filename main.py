@@ -79,7 +79,6 @@ def labreport_simulation_statistics_agent3():
 if __name__ == "__main__":
     # labreport_simulation_statistics_agent1()
     # labreport_simulation_statistics_agent2()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_complete.json")
+    #simulation_statistics.visualize("data/", "simulation_statistics_complete.json")
 
-    # simulation_statistics.agent3(1, 10)
+    simulation_statistics.agent3(1, 20)
