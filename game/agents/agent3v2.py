@@ -14,6 +14,9 @@ class Agent3(Agent1):
         # a list that stores the prey's previous locations whenever it is completely known for sure 
         self.prey_prev_locations = [] 
 
+        # the number of timesteps since the agent was last seen 
+        self.num_timesteps_since_prey_last_seen = float("inf")
+
     def get_highest_prob_nodes(self):
         """gets nodes that have the highest probability of containing the prey"""
         highest_prob = max(self.belief_state.values())
@@ -32,16 +35,23 @@ class Agent3(Agent1):
             self.prey_prev_locations.append(node)
         return signal, node 
 
-    def update_probs_with_bayes(self, node):
+    def update_probs_with_bayes(self, highest_prob_node):
         # P(n_i = True | n_curr = False) = P(n_i = True) * P(n_curr = False | n_i = True) / P(n_curr = False)
         # P(n_i = True | n_curr = False) = P(n_i = True) * 1 / P(n_curr = False)
         # P(n_i = True | n_curr = False) = P(n_i = True) * 1 / (1-P(n_curr = True))
         # avoid divide by zero errors if at any point denom becomes arbitrarily close to 0
 
-        denominator = min(1 - self.beliefs[node], 0.0001)
+        denominator = min(1 - self.beliefs[highest_prob_node], 0.0001)
         for node, prior in self.beliefs.items():
             if node == self.location: self.beliefs[node] = 0 
             else: self.beliefs[node] = prior / denominator 
+
+    def update_probs_found_prey(self):
+         """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
+        for node, belief in self.beliefs.items():
+            self.beliefs[node] = 0 if node != self.location else 1 
+        self.num_timesteps_since_prey_last_seen = 0 
+
 
     def move(self, graph, prey, predator):
         """
@@ -51,18 +61,19 @@ class Agent3(Agent1):
             # if the current timestep's signal is the prey, update all the proabilities: {0,0,...,1,...,0}
             # otherwise, propogate probability mass of beliefs to neighbors, neighbors of neighbors, and so on (modified bfs)
         """
-        signal, node = self.get_signal_prey_exists(prey)
+        signal, highest_prob_node = self.get_signal_prey_exists(prey)
+
         if len(self.prey_prev_locations) == 0: 
             """while we do not know where the prey is, update the probabilities of all nodes with Bayes Rule"""
-            self.update_probs_with_bayes(node)
+            self.update_probs_with_bayes(highest_prob_node)
+
         elif signal == True and len(self.prey_prev_locations) > 0 : 
             """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
-
-
-
-            pass 
+            self.update_probs_found_prey()
+            
         elif signal == False and len(self.prey_prev_locations) > 0:
-            pass 
+            """redistribute the probability mass based on the number of timesteps since last seen""" 
+
             
 
 
