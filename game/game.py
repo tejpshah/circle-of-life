@@ -135,7 +135,8 @@ class Game:
         status = 0
         while status == 0:
             status = self.step()
-        return 0
+            self.visualize_graph()
+        return status
 
     def visualize_graph_color_map(self):
         """

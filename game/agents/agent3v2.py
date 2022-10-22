@@ -52,13 +52,14 @@ class Agent3(Agent1):
         """
         denominator = max(1 - self.beliefs[highest_prob_node], 0.0001)
         for node, prior in self.beliefs.items():
-            if node == self.location or node == highest_prob_node: self.beliefs[node] = 0 
+            if node == self.location or node == highest_prob_node: self.beliefs[node] = 0.0100
             else: self.beliefs[node] = round(prior / denominator, 4)
 
     def update_probs_found_prey(self, highest_prob_node):
         """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
         for node, belief in self.beliefs.items():
             self.beliefs[node] = 0 if node != highest_prob_node else 1 
+        self.frontier = set() 
         self.frontier.add(highest_prob_node)
         self.counts = dict() 
 
@@ -91,6 +92,8 @@ class Agent3(Agent1):
             # otherwise, propogate probability mass of beliefs to neighbors, neighbors of neighbors, and so on (modified bfs)
         """
         signal, highest_prob_node = self.get_signal_prey_exists(prey)
+
+        print(f"WE SURVEY NODE {highest_prob_node} and its signal is {signal}")
 
         if len(self.prey_prev_locations) == 0: 
             """while we do not know where the prey is, update the probabilities of all nodes with Bayes Rule"""
