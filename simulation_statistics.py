@@ -95,7 +95,7 @@ def visualize(dirname, filename):
     axes.bar(x_pos, means, color=colors, yerr=stds,
              align='center', ecolor='black', capsize=10)
 
-    plt.title(f'{setting.capitalize()} Agents\' Average Success Rates')
+    plt.title(f'{setting.title()} Agents\' Average Success Rates')
     axes.set_xticks(x_pos)
     axes.set_xticklabels(agents)
     plt.gca().set_ylim(bottom=0, top=100)
