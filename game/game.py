@@ -49,6 +49,8 @@ class Game:
         if self.agent.location == self.predator.location:
             return -1
 
+        self.visualize_graph()
+
         self.prey.move(self.graph)
         self.prey_trajectories.append(self.prey.location)
         if self.agent.location == self.prey.location:
@@ -135,7 +137,6 @@ class Game:
         status = 0
         while status == 0:
             status = self.step()
-            self.visualize_graph()
         return status
 
     def visualize_graph_color_map(self):
@@ -156,7 +157,7 @@ class Game:
 
     def visualize_graph(self, fn='environment.png'):
         """visualizes nodes and their edges with labels in non-circular layout"""
-        plt.rcParams['figure.figsize'] = [16, 5]
+        plt.rcParams['figure.figsize'] = [8, 6]
         G = nx.from_dict_of_lists(self.graph.get_neighbors())
         my_pos = nx.spring_layout(G, seed=100)
         nx.draw(G, pos=my_pos,
