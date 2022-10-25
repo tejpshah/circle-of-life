@@ -77,11 +77,29 @@ def labreport_simulation_statistics_agent3():
     return round(average, 2)
 
 
+def labreport_simulation_statistics_agent4():
+    """
+    runs 100 simulations 30 times and returns the average 
+    """
+    success_rates = []
+    for _ in range(30):
+        simulation_success = simulation_statistics.agent4(100, 50)
+        success_rates.append(simulation_success)
+
+    average = sum(success_rates) / len(success_rates)
+
+    save_simulation_statistics("partial-prey", "agent4", success_rates)
+    print(
+        f"Agent4: Overall Success Rate: {round(average,2)}%")
+    return round(average, 2)
+
+
 if __name__ == "__main__":
     # labreport_simulation_statistics_agent1()
     # labreport_simulation_statistics_agent2()
     # simulation_statistics.visualize("data/", "simulation_statistics_complete.json")
 
-    labreport_simulation_statistics_agent3()
-    # agent 4 would be here
-    simulation_statistics.visualize("data/", "simulation_statistics_partial-prey.json")
+    # labreport_simulation_statistics_agent3()
+    labreport_simulation_statistics_agent4()
+    simulation_statistics.visualize(
+        "data/", "simulation_statistics_partial-prey.json")

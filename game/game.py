@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from game.agents.agent1 import Agent1
 from game.agents.agent2 import Agent2
 from game.agents.agent3 import Agent3
+from game.agents.agent4 import Agent4
 from .graph import Graph
 from .predator import Predator
 from .prey import Prey
@@ -140,6 +141,24 @@ class Game:
 
     def run_agent_3_debug(self):
         self.agent = Agent3(self.agent_starting_location, self.graph)
+        status = 0
+        while status == 0:
+            status = self.step()
+            self.visualize_graph()
+
+        self.visualize_graph_video()
+        return status
+
+    def run_agent_4(self):
+        self.agent = Agent4(self.agent_starting_location, self.graph)
+        status = 0
+        while status == 0:
+            status = self.step()
+
+        return status
+
+    def run_agent_4_debug(self):
+        self.agent = Agent4(self.agent_starting_location, self.graph)
         status = 0
         while status == 0:
             status = self.step()

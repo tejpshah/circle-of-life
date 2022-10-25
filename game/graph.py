@@ -97,6 +97,7 @@ class Graph:
                     self.edges_added += 1
         #print(f"The number of edges added is {self.edges_added}")
 
+
 """
 LAB REPORT Q1.1: 
 hashmap = {}

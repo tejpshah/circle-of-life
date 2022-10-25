@@ -5,6 +5,7 @@ SANITY CHECKED: PREDATOR SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTI
 import random
 import queue
 
+
 class Predator:
     def __init__(self, location):
         self.location = location
