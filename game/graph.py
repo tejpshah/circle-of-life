@@ -83,7 +83,7 @@ class Graph:
         - add edge within 5 steps forwards/backwards in loop
         - do this until no more edges can be added 
         """
-        edges_added = 0
+        self.edges_added = 0
         while self.is_graph_done() == False:
             v = random.randint(1, self.nodes)
             while self.get_degree(v) >= 3:
@@ -94,5 +94,15 @@ class Graph:
                 w = random.choice(candidate_edges)
                 if w not in self.nbrs[v] and w != v:
                     self.add_edge(v, w)
-                    edges_added += 1
-        # print(f"The number of edges added is {edges_added}")
+                    self.edges_added += 1
+        #print(f"The number of edges added is {self.edges_added}")
+
+"""
+LAB REPORT Q1.1: 
+hashmap = {}
+for i in range(100000):
+    g = Graph()
+    hashmap[g.edges_added] = hashmap.get(g.edges_added,0) + 1
+print(hashmap)
+print(sum(hashmap.values()))
+"""

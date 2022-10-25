@@ -26,3 +26,9 @@ But, each edge needs two nodes, so 50/2 = 25 max nodes
 - Sanity Check Complete: The game class looks good. Added extra functionality for debugging which stores the trajectories on the screen plus made game window bigger.
 - Sanity Check Complete: The agent class looks good. Updated the BFS method with the more optimal BFS method from the Predator class. 
  
+## Agent 3 and Agent 4
+- Define a normalize method for the probability in both agent 3 and agent 4C
+
+ ## Agent 4
+ - Instead of choosing random.choice() for highest probability node, choose the node farthest from predator
+ - Run Agent 2 instead of Agent 1 in super().move() 
