@@ -3,8 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from game.agents.agent1 import Agent1
 from game.agents.agent2 import Agent2
-from game.agents.agent3 import Agent3 as A3V1
-from game.agents.agent3v2 import Agent3 as A3V2
+from game.agents.agent3 import Agent3
 from .graph import Graph
 from .predator import Predator
 from .prey import Prey
@@ -22,7 +21,8 @@ class Game:
         # agent initializes randomly to any spot that is not occupied by predator/prey
         occupied_s = min(self.prey.location, self.predator.location)
         occupied_l = max(self.prey.location, self.predator.location)
-        agent_location_options = list(range(1, occupied_s)) + list(range(occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
+        agent_location_options = list(range(1, occupied_s)) + list(range(
+            occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
         self.agent_starting_location = random.choice(agent_location_options)
 
         # initializes an agent which allows us to call the relevant agent.
@@ -48,8 +48,6 @@ class Game:
             return 1
         if self.agent.location == self.predator.location:
             return -1
-
-        self.visualize_graph()
 
         self.prey.move(self.graph)
         self.prey_trajectories.append(self.prey.location)
@@ -132,11 +130,11 @@ class Game:
         return status
 
     def run_agent_3(self):
-        self.agent = A3V2(self.agent_starting_location, self.graph)
-        # self.step()
+        self.agent = Agent3(self.agent_starting_location, self.graph)
         status = 0
         while status == 0:
             status = self.step()
+            # self.visualize_graph()
         return status
 
     def visualize_graph_color_map(self):
@@ -171,7 +169,7 @@ class Game:
         plt.figtext(0.1, 0.1, trajectories, ha="left", fontsize=8)
 
         plt.show()
-    
+
     def visualize_graph_video(self, fn='videos/environment.mp4'):
         """visualizes nodes and their edges with labels in non-circular layout as a video"""
         import os
@@ -184,10 +182,13 @@ class Game:
         my_pos = nx.spring_layout(G, seed=100)
 
         for i in range(len(self.agent_trajectories)):
-            plt.clf() # make sure we clear any old stuff
-            agent_location = self.agent_trajectories[min(i, len(self.agent_trajectories)-1)]
-            prey_location = self.prey_trajectories[min(i, len(self.prey_trajectories)-1)]
-            predator_location = self.predator_trajectories[min(i, len(self.predator_trajectories)-1)]
+            plt.clf()  # make sure we clear any old stuff
+            agent_location = self.agent_trajectories[min(
+                i, len(self.agent_trajectories)-1)]
+            prey_location = self.prey_trajectories[min(
+                i, len(self.prey_trajectories)-1)]
+            predator_location = self.predator_trajectories[min(
+                i, len(self.predator_trajectories)-1)]
 
             color_map = ["grey" for _ in self.graph.get_neighbors()]
             color_map[prey_location - 1] = "yellowgreen"
@@ -200,7 +201,7 @@ class Game:
                 agent_location, prey_location, predator_location)
             plt.figtext(0.5, 0.05, figure_text, ha="center", fontsize=10)
 
-            plt.savefig('figure' + str(i) + '.png') # save this figure to disk
+            plt.savefig('figure' + str(i) + '.png')  # save this figure to disk
 
         # now combine all of the figures into a video
         os.system('ffmpeg -r 3 -i figure%d.png -vcodec mpeg4 -y '+fn)

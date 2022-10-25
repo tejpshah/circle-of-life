@@ -59,6 +59,7 @@ def labreport_simulation_statistics_agent2():
         f"Agent2: Overall Success Rate: {round(average,2)}%")
     return round(average, 2)
 
+
 def labreport_simulation_statistics_agent3():
     """
     runs 100 simulations 30 times and returns the average 
@@ -82,6 +83,7 @@ if __name__ == "__main__":
     # simulation_statistics.visualize("data/", "simulation_statistics_complete.json")
 
     # labreport_simulation_statistics_agent3()
+    # agent 4 would be here
     # simulation_statistics.visualize("data/", "simulation_statistics_partial-prey.json")
-    
-    simulation_statistics.agent3(1, 8)
+
+    simulation_statistics.agent3(1, 10)
