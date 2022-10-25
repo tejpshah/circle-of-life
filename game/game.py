@@ -127,6 +127,7 @@ class Game:
             status = self.step_debug()
             self.visualize_graph()
 
+        self.visualize_graph_video()
         return status
 
     def run_agent_3(self):
@@ -134,7 +135,17 @@ class Game:
         status = 0
         while status == 0:
             status = self.step()
-            # self.visualize_graph()
+
+        return status
+
+    def run_agent_3_debug(self):
+        self.agent = Agent3(self.agent_starting_location, self.graph)
+        status = 0
+        while status == 0:
+            status = self.step()
+            self.visualize_graph()
+
+        self.visualize_graph_video()
         return status
 
     def visualize_graph_color_map(self):

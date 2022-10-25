@@ -82,8 +82,6 @@ if __name__ == "__main__":
     # labreport_simulation_statistics_agent2()
     # simulation_statistics.visualize("data/", "simulation_statistics_complete.json")
 
-    # labreport_simulation_statistics_agent3()
+    labreport_simulation_statistics_agent3()
     # agent 4 would be here
-    # simulation_statistics.visualize("data/", "simulation_statistics_partial-prey.json")
-
-    simulation_statistics.agent3(1, 10)
+    simulation_statistics.visualize("data/", "simulation_statistics_partial-prey.json")
