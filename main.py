@@ -100,6 +100,8 @@ if __name__ == "__main__":
     # simulation_statistics.visualize("data/", "simulation_statistics_complete.json")
 
     # labreport_simulation_statistics_agent3()
-    labreport_simulation_statistics_agent4()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_partial-prey.json")
+    # labreport_simulation_statistics_agent4()
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_partial-prey.json")
+
+    simulation_statistics.agent4(1, 10)

@@ -33,10 +33,16 @@ class Agent4(Agent2):
                 highest_prob_nodes.append(node)
         return highest_prob_nodes
 
-    def get_signal_prey_exists(self, prey):
+    def get_signal_prey_exists(self, graph, prey, predator):
         """returns whether or not a prey exists at a location"""
         signal = False
-        node = random.choice(self.get_highest_prob_nodes())
+
+        node_pred_dist = {node: self.bfs(
+            graph, node, predator.location) for node in self.get_highest_prob_nodes()}
+        highest_pred_dist_nodes = [node for node, dist in node_pred_dist.items(
+        ) if dist == max(node_pred_dist.values())]
+        node = random.choice(highest_pred_dist_nodes)
+
         if prey.location == node:
             signal = True
             self.prey_prev_locations.append(node)
@@ -93,7 +99,8 @@ class Agent4(Agent2):
             # if the current timestep's signal is the prey, update all the proabilities: {0,0,...,1,...,0}
             # otherwise, propogate probability mass of beliefs to neighbors, neighbors of neighbors, and so on (modified bfs)
         """
-        signal, highest_prob_node = self.get_signal_prey_exists(prey)
+        signal, highest_prob_node = self.get_signal_prey_exists(
+            graph, prey, predator)
 
         if len(self.prey_prev_locations) == 0:
             """while we do not know where the prey is, update the probabilities of all nodes with Bayes Rule"""
@@ -126,7 +133,8 @@ class Agent4(Agent2):
             # if the current timestep's signal is the prey, update all the proabilities: {0,0,...,1,...,0}
             # otherwise, propogate probability mass of beliefs to neighbors, neighbors of neighbors, and so on (modified bfs)
         """
-        signal, highest_prob_node = self.get_signal_prey_exists(prey)
+        signal, highest_prob_node = self.get_signal_prey_exists(
+            graph, prey, predator)
 
         print(f"CURRENT LOCATION {self.location}")
         print(f"SURVEY {highest_prob_node}, SIGNAL = {signal}")
