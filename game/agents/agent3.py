@@ -3,6 +3,7 @@ from .agent1 import Agent1
 from game.prey import Prey
 from copy import deepcopy
 
+
 class Agent3(Agent1):
     def __init__(self, location, graph):
         # initializes A3 with given location
@@ -22,7 +23,7 @@ class Agent3(Agent1):
 
         # keeps track of counts and frequencies for redistributing the probability mass
         self.counts = dict()
-    
+
     def round_probs_beliefs(self):
         for key in self.beliefs.keys():
             self.beliefs[key] = round(self.beliefs[key], 4)
@@ -52,7 +53,6 @@ class Agent3(Agent1):
                 self.beliefs[node] = 0.0
             else:
                 self.beliefs[node] = round(1 / (graph.get_nodes() - 2), 4)
-                # self.beliefs[node] = 1 / (graph.get_nodes() - 2)
 
     def update_probs_found_prey(self, highest_prob_node):
         """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
@@ -73,10 +73,8 @@ class Agent3(Agent1):
                 new_frontier.add(nbr)
         self.frontier = new_frontier
 
-
-
         probability_mass = deepcopy(self.counts)
-        print(f"probability hashmap count {probability_mass}")
+
         self.counts = dict()
         probability_mass[self.location] = 0
         probability_mass[highest_prob_node] = 0
@@ -85,7 +83,6 @@ class Agent3(Agent1):
         for key in probability_mass.keys():
             self.beliefs[key] = round(
                 probability_mass[key] / normalization_denominator, 4)
-            # self.beliefs[key] = probability_mass[key] / normalization_denominator
 
     def normalize_beliefs(self):
         values_sum = sum(self.beliefs.values())
@@ -115,17 +112,14 @@ class Agent3(Agent1):
             self.update_probs_found_prey_distribute_probability(
                 graph, highest_prob_node)
 
-        self.round_probs_beliefs()
         self.normalize_beliefs()
-        self.round_probs_beliefs()    
-
 
         # select potential prey position and move according to the rules of agent 1
         highest_prob_nodes = self.get_highest_prob_nodes()
         potential_prey = Prey(random.choice(highest_prob_nodes))
         super().move(graph, potential_prey, predator)
 
-        return 1
+        return len(self.prey_prev_locations), None
 
     def move_debug(self, graph, prey, predator):
         """
@@ -158,12 +152,8 @@ class Agent3(Agent1):
             print(f"THE FRONTIER IS: {self.frontier}")
             print(f"THE COUNTS HASHMAP IS: {self.counts}")
             print(f"PROPOGATE PREY BELIEFS:\t{self.beliefs}")
-        
 
-
-        self.round_probs_beliefs()      
         self.normalize_beliefs()
-        self.round_probs_beliefs()
 
         print(f'BELIEFS NORMALIZED:\t{self.beliefs}')
         print(f'SUM:\t\t{sum(self.beliefs.values())}\n')
@@ -173,4 +163,4 @@ class Agent3(Agent1):
         potential_prey = Prey(random.choice(highest_prob_nodes))
         super().move(graph, potential_prey, predator)
 
-        return 1
+        return len(self.prey_prev_locations), None

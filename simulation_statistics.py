@@ -10,19 +10,23 @@ def agent1(num_simulations, nodes=50):
     run simulation n times and get statistics on success
     """
     agent_success = []
+    timeouts = 0
     for _ in range(num_simulations):
         game = Game(nodes)
         game_success = game.run_agent_1()
 
-        # agent caught the prey = 1, predator caught the agent = 0
+        # agent caught the prey = 1, predator caught the agent/timeout = 0
         agent_success.append(1 if game_success == 1 else 0)
 
+        # timeout if game_success returns -2
+        timeouts = timeouts + 1 if game_success == -2 else timeouts
+
     wins = sum(agent_success)
-    losses = len(agent_success) - wins
+    losses = len(agent_success) - wins - timeouts
     success = wins/(wins + losses)
     print(
-        f"Agent1: Wins: {wins}\tLosses: {losses}\tSuccess Rate: {round(success*100,2)}%")
-    return round(success*100, 2)
+        f"Agent1: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
+    return wins, losses, timeouts, round(success*100, 2)
 
 
 def agent2(num_simulations, nodes=50):
@@ -30,19 +34,23 @@ def agent2(num_simulations, nodes=50):
     run simulation n times and get statistics on success
     """
     agent_success = []
+    timeouts = 0
     for _ in range(num_simulations):
         game = Game(nodes)
         game_success = game.run_agent_2()
 
-        # agent caught the prey = 1, predator caught the agent = 0
+        # agent caught the prey = 1, predator caught the agent/timeout = 0
         agent_success.append(1 if game_success == 1 else 0)
 
+        # timeout if game_success returns -2
+        timeouts = timeouts + 1 if game_success == -2 else timeouts
+
     wins = sum(agent_success)
-    losses = len(agent_success) - wins
+    losses = len(agent_success) - wins - timeouts
     success = wins/(wins + losses)
     print(
-        f"Agent2: Wins: {wins}\tLosses: {losses}\tSuccess Rate: {round(success*100,2)}%")
-    return round(success*100, 2)
+        f"Agent2: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
+    return wins, losses, timeouts, round(success*100, 2)
 
 
 def agent3(num_simulations, nodes=50):
@@ -101,8 +109,9 @@ def visualize(dirname, filename):
     agents = []
     means = []
     stds = []
-    for agent, success_rates in data.items():
+    for agent, value in data.items():
         agents.append(f'{agent[:-1].capitalize()} {agent[-1]}')
+        success_rates = value['success-rates']
         np_success_rates = np.array(success_rates)
         means.append(np.mean(np_success_rates))
         stds.append(2 * np.std(np_success_rates))  # 2 standard deviations
@@ -132,6 +141,3 @@ def visualize(dirname, filename):
     # plt.show()
 
     return 1
-
-game = Game() 
-game.run_agent_3_debug()
