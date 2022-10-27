@@ -185,14 +185,10 @@ class Game:
         if status == 0:
             status = -2
 
-        return status if status != 0 else -2
+        return status, found_prey
 
     def run_agent_3_debug(self):
         self.agent = Agent3(self.agent_starting_location, self.graph)
-<<<<<<< HEAD
-=======
-
->>>>>>> c32c80e6400808619d951bf7417495242721ac7e
         status = 0
         step_count = 0
         found_prey = 0
