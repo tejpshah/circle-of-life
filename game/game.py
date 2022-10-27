@@ -72,6 +72,7 @@ class Game:
         * 0 if game in progress
         * -1 if agent looses 
         """
+        print(f"THE NEIGHBORS ARE{self.graph.nbrs}")
         self.agent.move_debug(self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
         if self.agent.location == self.prey.location:
@@ -79,12 +80,12 @@ class Game:
         if self.agent.location == self.predator.location:
             return -1
 
-        self.prey.move_debug(self.graph)
+        self.prey.move(self.graph)
         self.prey_trajectories.append(self.prey.location)
         if self.agent.location == self.prey.location:
             return 1
 
-        self.predator.move_debug(self.graph, self.agent)
+        self.predator.move(self.graph, self.agent)
         self.predator_trajectories.append(self.predator.location)
         if self.agent.location == self.predator.location:
             return -1
@@ -143,7 +144,7 @@ class Game:
         self.agent = Agent3(self.agent_starting_location, self.graph)
         status = 0
         while status == 0:
-            status = self.step()
+            status = self.step_debug()
             self.visualize_graph()
 
         self.visualize_graph_video()
