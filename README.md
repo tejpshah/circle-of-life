@@ -29,11 +29,11 @@ But, each edge needs two nodes, so 50/2 = 25 max nodes
 ## Agent 3 and Agent 4
 - Define a normalize method for the probability in both agent 3 and agent 4C
 
- ## Agent 4
+## Agent 4
  - Instead of choosing random.choice() for highest probability node, choose the node farthest from predator
  - Run Agent 2 instead of Agent 1 in super().move() 
 
- # Things To Discuss:
+## Things To Discuss:
 	⁃	Nandini / Tej - Set up the belief updates equation for A5 to send to Aravind, the component of how the predator changes, to Aravind. 
 	⁃	Nandini / Tej - Write up core logic description for Agent 3 in the Lab Report. 
 	⁃	Nandini / Tej  - Write up core logic description for Agent 4 in the Lab Report. 

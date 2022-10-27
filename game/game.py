@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from game.agents.agent1 import Agent1
 from game.agents.agent2 import Agent2
 from game.agents.agent3 import Agent3
+from game.agents.a3clean import Agent3 as A3V2
 from game.agents.agent4 import Agent4
 from .graph import Graph
 from .predator import Predator
@@ -72,7 +73,6 @@ class Game:
         * 0 if game in progress
         * -1 if agent looses 
         """
-        print(f"THE NEIGHBORS ARE{self.graph.nbrs}")
         self.agent.move_debug(self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
         if self.agent.location == self.prey.location:
@@ -141,13 +141,13 @@ class Game:
         return status
 
     def run_agent_3_debug(self):
-        self.agent = Agent3(self.agent_starting_location, self.graph)
+        self.agent = A3V2(self.agent_starting_location, self.graph)
         status = 0
         while status == 0:
             status = self.step_debug()
             self.visualize_graph()
 
-        self.visualize_graph_video()
+        #self.visualize_graph_video()
         return status
 
     def run_agent_4(self):
