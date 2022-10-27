@@ -32,3 +32,15 @@ But, each edge needs two nodes, so 50/2 = 25 max nodes
  ## Agent 4
  - Instead of choosing random.choice() for highest probability node, choose the node farthest from predator
  - Run Agent 2 instead of Agent 1 in super().move() 
+
+ # Things To Discuss:
+	⁃	Nandini / Tej - Set up the belief updates equation for A5 to send to Aravind, the component of how the predator changes, to Aravind. 
+	⁃	Nandini / Tej - Write up core logic description for Agent 3 in the Lab Report. 
+	⁃	Nandini / Tej  - Write up core logic description for Agent 4 in the Lab Report. 
+	⁃	Nandini - can you add timeout functionality to all the games of t=500 time steps (Aravind said he might specify the amount late but let’s have functionality)? 
+	⁃	Nandini - can you add functionality within the agents/game to store number of wins, number of losses, and number of hung simulations? 
+	⁃	Nandini - can you add functionality to retrieve the number of times A3 knows exactly where the prey is and return that when computing simulation statistics? 
+	⁃	@Tej - can you write out belief updates using mathematical notation(especially the component on belief propagation) for A3/A5? 
+	⁃	@Tej - write out mathematical belief propagation updates in Lab Report for A3. 
+	⁃	@Tej - write out mathematical belief propagation updates in Lab Report for A5. 
+
