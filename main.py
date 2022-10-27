@@ -3,14 +3,21 @@ import os
 import simulation_statistics as simulation_statistics
 
 
-def get_overall_simulation_statistics(wins, losses, timeouts, success_rates):
+def get_overall_simulation_statistics(wins, losses, timeouts, success_rates, found_prey=None, found_pred=None):
     average_wins = round(sum(wins) / len(wins), 2)
     average_losses = round(sum(losses) / len(losses), 2)
     average_timeouts = round(sum(timeouts) / len(timeouts), 2)
     average_success = round(sum(success_rates) / len(success_rates), 2)
 
-    statistics = {"avg-wins": average_wins, "avg_losses": average_losses,
-                  "avg-timeouts": average_timeouts, "avg-success-rates": average_success}
+    average_found_prey = round(
+        sum(found_prey) / len(found_prey), 2) if found_prey != None else None
+    average_found_pred = round(
+        sum(found_pred) / len(found_pred), 2) if found_pred != None else None
+
+    statistics = {"avg-wins": average_wins, "avg-losses": average_losses,
+                  "avg-timeouts": average_timeouts, "avg-found-prey": average_found_prey,
+                  "avg-found-pred": average_found_pred, "avg-success-rates": average_success}
+
     return {"overall": statistics, "success-rates": success_rates}
 
 
@@ -124,10 +131,10 @@ def labreport_simulation_statistics_agent4():
 
 
 if __name__ == "__main__":
-    # labreport_simulation_statistics_agent1()
-    # labreport_simulation_statistics_agent2()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_complete.json")
+    labreport_simulation_statistics_agent1()
+    labreport_simulation_statistics_agent2()
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_complete.json")
 
     # labreport_simulation_statistics_agent3()
     # labreport_simulation_statistics_agent4()
