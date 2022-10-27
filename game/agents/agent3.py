@@ -1,166 +1,172 @@
-import random
-from .agent1 import Agent1
-from game.prey import Prey
-from copy import deepcopy
-
+import random 
+from .agent1 import Agent1 
+from game.prey import Prey 
+from copy import deepcopy 
 
 class Agent3(Agent1):
     def __init__(self, location, graph):
-        # initializes A3 with given location
+        # initiailize agent location 
         super().__init__(location)
 
-        # intializes belief states to be 1 / (N-1) for probability of prey for every cell that is not the agent
+        # initializes agent belief prob dist 
+        self.init_probs_step1(graph)
+
+        # list of all prey prev locations
+        self.prev_prey_locations = [] 
+
+    def move(self, graph, prey, predator):
+        signal, surveyed_node = self.survey_node(prey)
+        if len(self.prev_prey_locations) == 0: 
+            self.init_probs_step2(graph, surveyed_node)
+        elif signal == True and len(self.prev_prey_locations) > 0: 
+            self.init_probs_step3(surveyed_node)
+        elif signal == False and len(self.prev_prey_locations) > 0: 
+            self.init_probs_step4(graph, surveyed_node)
+        self.normalize_beliefs()
+        
+        potential_prey = Prey(random.choice(self.get_highest_prob_nodes()))
+        super().move(graph, potential_prey, predator)
+        return len(self.prev_prey_locations), None 
+
+    def move_debug(self, graph, prey, predator):
+        signal, surveyed_node = self.survey_node(prey)
+        print(f"\nTHE SIGNAL IS {signal} for surveyed node {surveyed_node}")
+        print(f"The agent's current location is {self.location}")
+
+        print(f"\nPRIOR BELIEFS: \n{self.beliefs}")
+
+        if len(self.prev_prey_locations) == 0: 
+            print("UPDATED PROBABILITIES INIT 2")
+            self.init_probs_step2(graph, surveyed_node)
+
+        elif signal == True and len(self.prev_prey_locations) > 0: 
+            print("UPDATED PROBABILITIES INIT 3")
+            self.init_probs_step3(surveyed_node)
+
+        elif signal == False and len(self.prev_prey_locations) > 0: 
+            print("UPDATED PROBABILITIES INIT 4")
+            print(f"CURRENT FRONTIER: {self.frontier}")
+            print(f"GRAPH NEIGHBORS:  {graph.nbrs}")
+            self.init_probs_step4(graph, surveyed_node)
+
+        self.normalize_beliefs()
+        print(f"THE SUM OF THE PROBABILITIES IS {sum(self.beliefs.values())}")
+        self.round_belief_probs()
+        print(f"UPDATED BELIEFS: \n{self.beliefs}\n")
+        
+        potential_prey = Prey(random.choice(self.get_highest_prob_nodes()))
+        super().move(graph, potential_prey, predator)
+        return len(self.prev_prey_locations), None 
+
+    def init_probs_step1(self, graph):
+        """
+        CORE: INITIALIZING INITIAL PROBABILITY.
+        
+        BELIEF UPDATE STEP 1: 
+        P(n_i) = 1 / (n-1) for every node not containing agent 
+        P(n_k) = 0 for the kth node containing the agent
+        """
         self.beliefs = dict()
         for i in range(1, graph.get_nodes() + 1):
-            self.beliefs[i] = round(
-                1 / (graph.get_nodes() - 1), 4) if i != self.location else 0
+            if i == self.location: self.beliefs[i] = 0 
+            else: self.beliefs[i] = 1 / (graph.get_nodes() - 1)
+    
+    def init_probs_step2(self, graph, surveyed_node):
+        """
+        CORE: SURVEYED NODE BUT THE PREY IS NOT THERE AND WE HAVEN'T FOUND PREY BEFORE. 
+        
+        BELIEF UPDATE STEP 2: 
+        P(n_i) = 1 / (n-2) for every node not agent's current location or surveyed_node
+        P(n_k) = P(n_surveyed) = 0 for the kth node containing the agent and the surveyed node
+        """
+        for node, _ in self.beliefs.items(): 
+            if node == self.location or node == surveyed_node: self.beliefs[node] = 0 
+            else: self.beliefs[node] = 1 / (graph.get_nodes() - 2)
+    
+    def init_probs_step3(self, surveyed_node):
+        """
+        CORE: SURVEYED NODE CONTAINS PREY!
 
-        # a list that stores the prey's previous locations whenever it is completely known for sure
-        self.prey_prev_locations = []
-
-        # keeps track of the nodes that we need in frontier for redistributing probability mass
-        self.frontier = set()
-
-        # keeps track of counts and frequencies for redistributing the probability mass
-        self.counts = dict()
-
-    def round_probs_beliefs(self):
-        for key in self.beliefs.keys():
-            self.beliefs[key] = round(self.beliefs[key], 4)
-
-    def get_highest_prob_nodes(self):
-        """gets nodes that have the highest probability of containing the prey"""
-        highest_prob = max(self.beliefs.values())
-        highest_prob_nodes = []
-        for node, prob in self.beliefs.items():
-            if prob == highest_prob:
-                highest_prob_nodes.append(node)
-        return highest_prob_nodes
-
-    def get_signal_prey_exists(self, prey):
-        """returns whether or not a prey exists at a location"""
-        signal = False
-        node = random.choice(self.get_highest_prob_nodes())
-        if prey.location == node:
-            signal = True
-            self.prey_prev_locations.append(node)
-        return signal, node
-
-    def update_probs_reinitialize(self, graph, highest_prob_node):
-        """reinitialize probabilities according to the limited direction we have on where the prey is"""
+        BELIEF UPDATE STEP 3: 
+        P(n_surveyed) = 1
+        P(n_i) = 0 for all i != n_surveyed
+        """
         for node, _ in self.beliefs.items():
-            if node == self.location or node == highest_prob_node:
-                self.beliefs[node] = 0.0
-            else:
-                self.beliefs[node] = round(1 / (graph.get_nodes() - 2), 4)
+            if node == surveyed_node: self.beliefs[node] = 1
+            else: self.beliefs[node] = 0 
+        
+        # SETS UP FRONTIER OF UNIQUE STATES VISITED FOR BELIEF UPDATE 4
+        self.frontier = set() 
+        self.frontier.add(surveyed_node)
 
-    def update_probs_found_prey(self, highest_prob_node):
-        """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
-        for node, _ in self.beliefs.items():
-            self.beliefs[node] = 0 if node != highest_prob_node else 1
-        self.frontier = set()
-        self.frontier.add(highest_prob_node)
-        self.counts = dict()
+        # ADDS IT TO PREVOIUS PREY LOCATIONS SEEN
+        self.prev_prey_locations.append(surveyed_node)
+    
+    def init_probs_step4(self, graph, surveyed_node):
+        """
+        CORE: SURVEYED NODE DOESN'T CONTAIN PREY BUT WE FOUND A PREY BEFORE!
 
-    def update_probs_found_prey_distribute_probability(self, graph, highest_prob_node):
-        """redistribute probability mass"""
-        new_frontier = set()
-        for node in self.frontier:
-            self.counts[node] = self.counts.get(node, 0) + 1
-            new_frontier.add(node)
+        BELIEF UPDATE STEP 4: 
+        - Given frontier F_{t-1} at t-1, determine frontier F_{t} at t, and compute # of ways to get to each element in F_{t}
+        - Remove the number of ways to get to current agent location if exists in set or current surveyed node if it exists in set
+        - Update beliefs based on the number of ways to get to each place in a particular state
+        """
+
+        # RETRIEVES THE FREQUENCY EACH STATE CAN BE VISITED FROM FRONTIER
+        counts = dict()
+        for node in self.frontier: 
+            counts[node] = counts.get(node, 0) + 1 
             for nbr in graph.nbrs[node]:
-                self.counts[nbr] = self.counts.get(nbr, 0) + 1
-                new_frontier.add(nbr)
-        self.frontier = new_frontier
+                counts[nbr] = counts.get(nbr, 0) + 1 
 
-        probability_mass = deepcopy(self.counts)
+        # UDPATES FRONTIER, ALL POSSIBLE STATES AGENT CAN BE IN 
+        self.frontier = set(counts.keys())
 
-        self.counts = dict()
-        probability_mass[self.location] = 0
-        probability_mass[highest_prob_node] = 0
+        # WE COMPUTE THE PROBABILITIES BASED ON FREQUENCY
+        probability_mass = deepcopy(counts)
+        probability_mass[self.location] = 0 
+        probability_mass[surveyed_node] = 0 
+        denominator = sum(probability_mass.values())
 
-        normalization_denominator = sum(probability_mass.values())
-        for key in probability_mass.keys():
-            self.beliefs[key] = round(
-                probability_mass[key] / normalization_denominator, 4)
+        # UPDATE THE BELIEFS BASED ON FREQUENCIES
+        for key in probability_mass.keys(): 
+            self.beliefs[key] = probability_mass[key] / denominator 
 
     def normalize_beliefs(self):
+        """
+        ENSURES THAT ALL PROBABILITIES SUM TO 1
+        """
         values_sum = sum(self.beliefs.values())
         for node, probability in self.beliefs.items():
             self.beliefs[node] = probability/values_sum
 
-    def move(self, graph, prey, predator):
+    def survey_node(self, prey):
         """
-        # take a signal reading of the highest proability node to see if a prey exists 
-        # uncertain where prey is at all so reinitialize the belief such that all locations except the surveyed node and our current location are equally probable prey locations
-        # we've previously had a signal reading of where the prey actually is 
-            # if the current timestep's signal is the prey, update all the proabilities: {0,0,...,1,...,0}
-            # otherwise, propogate probability mass of beliefs to neighbors, neighbors of neighbors, and so on (modified bfs)
+        HELPER:
+        RETURNS (SIGNAL=T/F, NODE_SURVEYED=n_i)
+        Indicates node surveyed and whether or not prey is there. 
         """
-        signal, highest_prob_node = self.get_signal_prey_exists(prey)
+        signal = False
+        node = random.choice(self.get_highest_prob_nodes())
+        if prey.location == node:
+            signal = True
+            self.prev_prey_locations.append(node)
+        return signal, node
 
-        if len(self.prey_prev_locations) == 0:
-            """while we do not know where the prey is, update the probabilities of all nodes with Bayes Rule"""
-            self.update_probs_reinitialize(graph, highest_prob_node)
-
-        elif signal == True and len(self.prey_prev_locations) > 0:
-            """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
-            self.update_probs_found_prey(highest_prob_node)
-
-        elif signal == False and len(self.prey_prev_locations) > 0:
-            """redistribute the probability mass based on the number of timesteps since last seen"""
-            self.update_probs_found_prey_distribute_probability(
-                graph, highest_prob_node)
-
-        self.normalize_beliefs()
-
-        # select potential prey position and move according to the rules of agent 1
-        highest_prob_nodes = self.get_highest_prob_nodes()
-        potential_prey = Prey(random.choice(highest_prob_nodes))
-        super().move(graph, potential_prey, predator)
-
-        return len(self.prey_prev_locations), None
-
-    def move_debug(self, graph, prey, predator):
+    def get_highest_prob_nodes(self):
         """
-        debug version
-        # take a signal reading of the highest proability node to see if a prey exists 
-        # uncertain where prey is at all so reinitialize the belief such that all locations except the surveyed node and our current location are equally probable prey locations
-        # we've previously had a signal reading of where the prey actually is 
-            # if the current timestep's signal is the prey, update all the proabilities: {0,0,...,1,...,0}
-            # otherwise, propogate probability mass of beliefs to neighbors, neighbors of neighbors, and so on (modified bfs)
+        HELPER:
+        RETURNS LIST OF ALL NODES OF EQUIVALENT HIGHEST PROBABILITY. 
         """
-        signal, highest_prob_node = self.get_signal_prey_exists(prey)
+        PROB, nodes = max(self.beliefs.values()), []
+        for node, prob in self.beliefs.items():
+            if prob == PROB: nodes.append(node)
+        return nodes 
 
-        print(f"\nCURRENT LOCATION {self.location}")
-        print(f"SURVEY {highest_prob_node}, SIGNAL = {signal}\n")
-
-        if len(self.prey_prev_locations) == 0:
-            """while we do not know where the prey is, update the probabilities of all nodes with Bayes Rule"""
-            self.update_probs_reinitialize(graph, highest_prob_node)
-            print(f"REINITIALIZE BELIEFS:\t{self.beliefs}")
-
-        elif signal == True and len(self.prey_prev_locations) > 0:
-            """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
-            self.update_probs_found_prey(highest_prob_node)
-            print(f"FOUND PREY:\t{self.beliefs}")
-
-        elif signal == False and len(self.prey_prev_locations) > 0:
-            """redistribute the probability mass based on the number of timesteps since last seen"""
-            self.update_probs_found_prey_distribute_probability(
-                graph, highest_prob_node)
-            print(f"THE FRONTIER IS: {self.frontier}")
-            print(f"THE COUNTS HASHMAP IS: {self.counts}")
-            print(f"PROPOGATE PREY BELIEFS:\t{self.beliefs}")
-
-        self.normalize_beliefs()
-
-        print(f'BELIEFS NORMALIZED:\t{self.beliefs}')
-        print(f'SUM:\t\t{sum(self.beliefs.values())}\n')
-
-        # select potential prey position and move according to the rules of agent 1
-        highest_prob_nodes = self.get_highest_prob_nodes()
-        potential_prey = Prey(random.choice(highest_prob_nodes))
-        super().move(graph, potential_prey, predator)
-
-        return len(self.prey_prev_locations), None
+    def round_belief_probs(self, k=4):
+        """
+        HELPER:
+        UPDATES ALL BELIEFS TO BE ROUNDED TO K DECIMAL PLACES.
+        """
+        for key in self.beliefs.keys(): 
+            self.beliefs[key] = round(self.beliefs[key], k)

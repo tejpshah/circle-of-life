@@ -141,3 +141,6 @@ def visualize(dirname, filename):
     # plt.show()
 
     return 1
+
+#g1 = Game()
+#g1.run_agent_3_debug()

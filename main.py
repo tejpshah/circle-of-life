@@ -131,11 +131,10 @@ def labreport_simulation_statistics_agent4():
 
 
 if __name__ == "__main__":
-    # labreport_simulation_statistics_agent1()
-    # labreport_simulation_statistics_agent2()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_complete.json")
+    #labreport_simulation_statistics_agent1()
+    #labreport_simulation_statistics_agent2()
+    #simulation_statistics.visualize("data/", "simulation_statistics_complete.json")
 
-    # labreport_simulation_statistics_agent3()
+    labreport_simulation_statistics_agent3()
     # labreport_simulation_statistics_agent4()
     # simulation_statistics.visualize("data/", "simulation_statistics_partial-prey.json")
