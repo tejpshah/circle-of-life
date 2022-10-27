@@ -11,7 +11,7 @@ from .prey import Prey
 
 
 class Game:
-    def __init__(self, nodes=50):
+    def __init__(self, nodes=50, timeout=250):
         # initializes the graph on which agents/prey/predator play
         self.graph = Graph(nodes=nodes)
 
@@ -34,6 +34,9 @@ class Game:
         self.prey_trajectories = []
         self.predator_trajectories = []
 
+        # initializes the number of steps before timing out
+        self.timeout = timeout
+
     def step(self):
         """
         moves the agent, prey, and predator one step
@@ -42,25 +45,27 @@ class Game:
         * 1 if agent wins
         * 0 if game in progress
         * -1 if agent looses 
+
+        also returns number of times agent knew the exact location of the prey and the pred in the partial information settings
         """
-        self.agent.move(self.graph, self.prey, self.predator)
+        found_prey, found_pred = self.agent.move(self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
         if self.agent.location == self.prey.location:
-            return 1
+            return 1, found_prey, found_pred 
         if self.agent.location == self.predator.location:
-            return -1
+            return -1, found_prey, found_pred 
 
         self.prey.move(self.graph)
         self.prey_trajectories.append(self.prey.location)
         if self.agent.location == self.prey.location:
-            return 1
+            return 1, found_prey, found_pred 
 
         self.predator.move(self.graph, self.agent)
         self.predator_trajectories.append(self.predator.location)
         if self.agent.location == self.predator.location:
-            return -1
+            return -1, found_prey, found_pred 
 
-        return 0
+        return 0, found_prey, found_pred 
 
     def step_debug(self):
         """
@@ -73,31 +78,36 @@ class Game:
         * -1 if agent looses 
         """
         print(f"THE NEIGHBORS ARE{self.graph.nbrs}")
-        self.agent.move_debug(self.graph, self.prey, self.predator)
+        found_prey, found_pred = self.agent.move_debug(self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
         if self.agent.location == self.prey.location:
-            return 1
+            return 1, found_prey, found_pred 
         if self.agent.location == self.predator.location:
-            return -1
+            return -1, found_prey, found_pred 
 
         self.prey.move(self.graph)
         self.prey_trajectories.append(self.prey.location)
         if self.agent.location == self.prey.location:
-            return 1
+            return 1, found_prey, found_pred 
 
         self.predator.move(self.graph, self.agent)
         self.predator_trajectories.append(self.predator.location)
         if self.agent.location == self.predator.location:
-            return -1
+            return -1, found_prey, found_pred 
 
-        return 0
+        return 0, found_prey, found_pred 
 
     def run_agent_1(self):
         self.agent = Agent1(self.agent_starting_location)
+
         status = 0
-        while status == 0:
-            status = self.step()
-        return status
+        step_count = 0
+        
+        while status == 0 and step_count < self.timeout:
+            status, _, _ = self.step()
+            step_count = step_count + 1
+
+        return status if status != 0 else -2
 
     def run_agent_1_debug(self):
         self.agent = Agent1(self.agent_starting_location)
@@ -105,7 +115,7 @@ class Game:
 
         status = 0
         while status == 0:
-            status = self.step_debug()
+            status, _, _ = self.step_debug()
             self.visualize_graph()
 
         self.visualize_graph_video()
@@ -116,7 +126,7 @@ class Game:
 
         status = 0
         while status == 0:
-            status = self.step()
+            status, _, _ = self.step()
 
         return status
 
@@ -126,7 +136,7 @@ class Game:
 
         status = 0
         while status == 0:
-            status = self.step_debug()
+            status, _, _ = self.step_debug()
             self.visualize_graph()
 
         self.visualize_graph_video()
@@ -135,38 +145,42 @@ class Game:
     def run_agent_3(self):
         self.agent = Agent3(self.agent_starting_location, self.graph)
         status = 0
+        found_prey = 0
         while status == 0:
-            status = self.step()
+            status, found_prey, _ = self.step()
 
-        return status
+        return status, found_prey
 
     def run_agent_3_debug(self):
         self.agent = Agent3(self.agent_starting_location, self.graph)
         status = 0
+        found_prey = 0
         while status == 0:
-            status = self.step_debug()
+            status, found_prey, _ = self.step_debug()
             self.visualize_graph()
 
         self.visualize_graph_video()
-        return status
+        return status, found_prey
 
     def run_agent_4(self):
         self.agent = Agent4(self.agent_starting_location, self.graph)
         status = 0
+        found_prey = 0
         while status == 0:
-            status = self.step()
+            status, found_prey, _ = self.step()
 
-        return status
+        return status, found_prey
 
     def run_agent_4_debug(self):
         self.agent = Agent4(self.agent_starting_location, self.graph)
         status = 0
+        found_prey = 0
         while status == 0:
-            status = self.step()
+            status, found_prey, _ = self.step()
             self.visualize_graph()
 
         self.visualize_graph_video()
-        return status
+        return status, found_prey
 
     def visualize_graph_color_map(self):
         """

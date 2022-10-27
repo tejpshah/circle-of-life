@@ -51,8 +51,10 @@ class Agent1(Agent):
             seta.add(self.location)
             setb.add(self.location)
             candidates = list(seta.intersection(setb))
+
         self.location = random.choice(candidates)
-        return 1
+
+        return None, None
 
     def move_debug(self, graph, prey, predator):
         """debug version of moving A1"""
@@ -125,7 +127,8 @@ class Agent1(Agent):
         print(f"CANDIDATES ARE: {candidates}")
         self.location = random.choice(candidates)
         print(f"NEW AGENT LOCATION IS: {self.location}")
-        return 1
+
+        return None, None
 
     def nbrs_closer_to_prey(self):
         """

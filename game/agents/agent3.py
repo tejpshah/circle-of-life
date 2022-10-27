@@ -3,6 +3,7 @@ from .agent1 import Agent1
 from game.prey import Prey
 from copy import deepcopy
 
+
 class Agent3(Agent1):
     def __init__(self, location, graph):
         # initializes A3 with given location
@@ -22,7 +23,7 @@ class Agent3(Agent1):
 
         # keeps track of counts and frequencies for redistributing the probability mass
         self.counts = dict()
-    
+
     def round_probs_beliefs(self):
         for key in self.beliefs.keys():
             self.beliefs[key] = round(self.beliefs[key], 4)
@@ -118,7 +119,7 @@ class Agent3(Agent1):
         potential_prey = Prey(random.choice(highest_prob_nodes))
         super().move(graph, potential_prey, predator)
 
-        return 1
+        return len(self.prey_prev_locations), None
 
     def move_debug(self, graph, prey, predator):
         """
@@ -162,4 +163,4 @@ class Agent3(Agent1):
         potential_prey = Prey(random.choice(highest_prob_nodes))
         super().move(graph, potential_prey, predator)
 
-        return 1
+        return len(self.prey_prev_locations), None

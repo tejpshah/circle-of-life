@@ -122,7 +122,7 @@ class Agent4(Agent2):
         potential_prey = Prey(random.choice(highest_prob_nodes))
         super().move(graph, potential_prey, predator)
 
-        return 1
+        return len(self.prey_prev_locations), None
 
     def move_debug(self, graph, prey, predator):
         """
@@ -164,4 +164,4 @@ class Agent4(Agent2):
         potential_prey = Prey(random.choice(highest_prob_nodes))
         super().move(graph, potential_prey, predator)
 
-        return 1
+        return len(self.prey_prev_locations), None

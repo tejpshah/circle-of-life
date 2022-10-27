@@ -49,7 +49,8 @@ class Agent2(Agent):
         elif len(nbrs_min_dist_prey) >= 1:
             """choose the candidate option that was given """
             self.location = nbrs_min_dist_prey[0]
-        return 1
+
+        return None, None
 
     def move_debug(self, graph, prey, predator):
         """
@@ -82,4 +83,5 @@ class Agent2(Agent):
             """choose the candidate option that was given"""
             print("choose the candidate option that was given")
             self.location = nbrs_min_dist_prey[0]
-        return 1
+
+        return None, None
