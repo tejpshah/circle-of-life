@@ -12,7 +12,7 @@ from .prey import Prey
 
 
 class Game:
-    def __init__(self, nodes=50, timeout=250):
+    def __init__(self, nodes=50, timeout=1000):
         # initializes the graph on which agents/prey/predator play
         self.graph = Graph(nodes=nodes)
 
@@ -110,7 +110,11 @@ class Game:
             status, _, _ = self.step()
             step_count = step_count + 1
 
-        return status if status != 0 else -2
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status
 
     def run_agent_1_debug(self):
         self.agent = Agent1(self.agent_starting_location)
@@ -121,11 +125,16 @@ class Game:
 
         while status == 0 and step_count < self.timeout:
             status, _, _ = self.step_debug()
+            step_count = step_count + 1
             self.visualize_graph()
 
         self.visualize_graph_video()
 
-        return status if status != 0 else -2
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status
 
     def run_agent_2(self):
         self.agent = Agent2(self.agent_starting_location)
@@ -135,8 +144,13 @@ class Game:
 
         while status == 0 and step_count < self.timeout:
             status, _, _ = self.step()
+            step_count = step_count + 1
 
-        return status if status != 0 else -2
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status
 
     def run_agent_2_debug(self):
         self.agent = Agent2(self.agent_starting_location)
@@ -147,50 +161,89 @@ class Game:
 
         while status == 0 and step_count < self.timeout:
             status, _, _ = self.step_debug()
+            step_count = step_count + 1
             self.visualize_graph()
 
         self.visualize_graph_video()
 
-        return status if status != 0 else -2
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status
 
     def run_agent_3(self):
         self.agent = Agent3(self.agent_starting_location, self.graph)
+
         status = 0
+        step_count = 0
         found_prey = 0
-        while status == 0:
+
+        while status == 0 and step_count < self.timeout:
             status, found_prey, _ = self.step()
+            step_count = step_count + 1
+
+        # agent timed out
+        if status == 0:
+            status = -2
 
         return status, found_prey
 
     def run_agent_3_debug(self):
-        self.agent = A3V2(self.agent_starting_location, self.graph)
+        self.agent = Agent3(self.agent_starting_location, self.graph)
+
         status = 0
+        step_count = 0
         found_prey = 0
-        while status == 0:
+
+        while status == 0 and step_count < self.timeout:
             status, found_prey, _ = self.step_debug()
+            step_count = step_count + 1
             self.visualize_graph()
 
         self.visualize_graph_video()
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
         return status, found_prey
 
     def run_agent_4(self):
         self.agent = Agent4(self.agent_starting_location, self.graph)
+
         status = 0
+        step_count = 0
         found_prey = 0
-        while status == 0:
+
+        while status == 0 and step_count < self.timeout:
             status, found_prey, _ = self.step()
+            step_count = step_count + 1
+
+        # agent timed out
+        if status == 0:
+            status = -2
 
         return status, found_prey
 
     def run_agent_4_debug(self):
         self.agent = Agent4(self.agent_starting_location, self.graph)
+
         status = 0
+        step_count = 0
         found_prey = 0
-        while status == 0:
+
+        while status == 0 and step_count < self.timeout:
             status, found_prey, _ = self.step()
+            step_count = step_count + 1
             self.visualize_graph()
 
         self.visualize_graph_video()
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
         return status, found_prey
 
     def visualize_graph_color_map(self):
