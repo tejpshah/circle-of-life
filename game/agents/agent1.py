@@ -1,6 +1,10 @@
+"""
+A1 is sanity checked and completed.
+NO FURTHER CHANGES NECESSARY. 
+"""
+
 import random
 from .agent import Agent
-
 
 class Agent1(Agent):
     def __init__(self, location):
