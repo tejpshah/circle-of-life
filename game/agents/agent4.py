@@ -55,7 +55,6 @@ class Agent4(Agent2):
                 self.beliefs[node] = 0.0
             else:
                 self.beliefs[node] = round(1 / (graph.get_nodes() - 2), 4)
-                # self.beliefs[node] = 1 / (graph.get_nodes() - 2)
 
     def update_probs_found_prey(self, highest_prob_node):
         """update probabilities according to one hot vector {0,0,0,...,1,....,0}"""
@@ -77,6 +76,8 @@ class Agent4(Agent2):
         self.frontier = new_frontier
 
         probability_mass = deepcopy(self.counts)
+
+        self.counts = dict()
         probability_mass[self.location] = 0
         probability_mass[highest_prob_node] = 0
 
@@ -84,7 +85,6 @@ class Agent4(Agent2):
         for key in probability_mass.keys():
             self.beliefs[key] = round(
                 probability_mass[key] / normalization_denominator, 4)
-            # self.beliefs[key] = probability_mass[key] / normalization_denominator
 
     def normalize_beliefs(self):
         values_sum = sum(self.beliefs.values())
