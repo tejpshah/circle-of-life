@@ -1,143 +1,124 @@
-from math import dist
 import random 
 from .agent1 import Agent1 
-from game.predator import Predator
 from copy import deepcopy 
+from game.predator import Predator 
 
 class Agent5(Agent1):
     def __init__(self, location, graph, predator):
-        # initiailize agent location 
+
+        # intiailize the location of the agent here
         super().__init__(location)
 
-        # initialize probs of predator 
-        self.init_probs_step1(graph, predator)
+        # stores the list of all pred prev locations 
+        self.pred_prev_locations = []
 
-        # list of all pred prev locations
-        self.pred_prev_locations = [] 
+        # we start of the game with knowing where predator is
+        self.init_probs_step1(graph, predator)
     
     def move(self, graph, prey, predator):
         signal, surveyed_node = self.survey_node(predator)
-        if signal == True: self.init_probs_step1(graph, predator)
-        elif signal == False: self.init_probs_step2(graph, surveyed_node)
-        self.normalize_beliefs()
-
+        if signal == True: self.init_probs_step2(graph, surveyed_node)
+        elif signal == False: self.init_probs_step3(graph, surveyed_node)
+        self.normalize_beliefs() 
         potential_predator = Predator(random.choice(self.get_highest_prob_nodes()))
         super().move(graph, prey, potential_predator)
         return None, len(self.pred_prev_locations)
-    
+
     def move_debug(self, graph, prey, predator):
-            signal, surveyed_node = self.survey_node(predator)
-            print(f"\nTHE SIGNAL IS {signal} for surveyed node {surveyed_node}")
-            print(f"The agent's current location is {self.location}")
 
-            print(f"\nPRIOR BELIEFS: \n{self.beliefs}")
-            if signal == True: 
-                print("UPDATED PROBABILITIES INIT 1")
-                self.init_probs_step1(graph, predator)
-            elif signal == False: 
-                print("UPDATED PROBABILITIES INIT 2")
-                print(f"CURRENT FRONTIER: {self.frontier}")
-                print(f"GRAPH NEIGHBORS:  {graph.nbrs}")
-                self.init_probs_step2(graph, surveyed_node)
+        print(f"\nTHE AGENT'S CURRENT LOCATION IS {self.location} ")
+        print(f"THE CURRENT FRONTIER IS {self.frontier}")
 
-            self.normalize_beliefs()
-            print(f"THE SUM OF THE PROBABILITIES IS {sum(self.beliefs.values())}")
-            self.round_belief_probs()
-            print(f"UPDATED BELIEFS: \n{self.beliefs}\n")
+        signal, surveyed_node = self.survey_node(predator)
+
+        print(f"THE SIGNAL IS {signal} for surveyed node {surveyed_node}")
+
+        print(f"PRIOR BELIEFS: {self.beliefs}")
+
+        if signal == True: 
+            self.init_probs_step2(graph, surveyed_node)
+            print("INIT PROBS 2")
+        elif signal == False: 
+            self.init_probs_step3(graph, surveyed_node)
+            print("INIT PROBS 3")
+        self.normalize_beliefs() 
+        print(f"THE SUM OF THE PROBABILITIES IS {sum(self.beliefs.values())}")
+
+        print(f"UPDATED BELIEFS: {self.beliefs}")
+
+        potential_predator = Predator(random.choice(self.get_highest_prob_nodes()))
+        print(f"WE PREDICT A PREDATOR TO EXIST AT {potential_predator.location}")
+        super().move(graph, prey, potential_predator)
+        print(f"The agent's new location is {self.location}")
+        return None, len(self.pred_prev_locations)
 
     def init_probs_step1(self, graph, predator):
-        """
-        CORE: SETS PROBABILITY OF WHERE PREDATOR IS TO 1, 0 EVERYWHERE ELSE. 
-        IF SiGNAL IS TRUE FOR WHERE THE PREDATOR IS, THEN CALL THIS FUNCTION TOO!
-        """
-        self.beliefs = dict()
+        """INITIALIZES 1 PROB TO PRED LOCATION 0 EVERYWHERE ELSE STARTING OUT"""
+        self.beliefs = dict() 
         for i in range(1, graph.get_nodes() + 1):
-            if i == predator.location: self.beliefs[i] = 1
+            if i == predator.location: self.beliefs[i] = 1 
             else: self.beliefs[i] = 0 
-        
+        self.frontier = set() 
+    
+    def init_probs_step2(self, graph, surveyed_node):
         # SETS UP THE CURRENT FRONTIER FOR PROBABILITY MASS REDISTRIBUTION
         self.frontier = set() 
-        self.frontier.add(predator.location)
+        self.frontier.add(surveyed_node)
 
         # WE FOUND THE PREDATOR!
-        self.pred_prev_locations.append(predator.location)
+        self.pred_prev_locations.append(surveyed_node)
 
-    def init_probs_step2(self, graph, surveyed_node):
-        """
-        CORE: REDISTRIBUTE PROBABILITY MASS AND UPDATE THE FRONTIER. 
-        - Given frontier F_{t-1} at t-1, determine frontier F_{t} at t, and compute # of ways to get to each element in F_{t}
-        - Remove the number of ways to get to current agent location if exists in set or current surveyed node if it exists in set
-        - Update beliefs based on the number of ways to get to each place in a particular state
-        """
-
-        print(f"\nTHE FRONTIER IS {self.frontier}")
-
-        # FIND ALL THE COUNTS TO EACH NEIGHBOR IN THE POSSIBLE FRONTIER
-        counts = dict() 
-        for node in self.frontier: 
-            counts[node] = counts.get(node, 0) + 1 
-            for nbr in graph.nbrs[node]:
-                counts[nbr] = counts.get(nbr, 0) + 1 
-        
-        print(f"\nTHE COUNTS ARE {counts}")
-
-        # FIND ALL THE DISTANCES FOR EACH POSSIBLE NEIGHBOR IN THE FRONTIER
-        distances = {}  
-        for state in self.frontier:
-            distances[state] = min(distances.get(state, float("inf")), self.bfs(graph, self.location, state))
-            for nbr in graph.nbrs[state]:
-                distances[nbr] = min(distances.get(nbr, float("inf")), self.bfs(graph, self.location, nbr))
-        
-        print(f"\nTHE DISTANCES ARE {counts}")
-
-        # FIND OUT ALL POSSIBLE OPTIMAL SOLUTIONS THAT CAN BE TAKEN
-        min_dist = min(distances.values())
-        pruned = {}
-        for key, dist in distances.items():
-            if dist == min_dist: pruned[key] = counts[key] 
-
-        print(f"\nTHE PRUNED MAP IS {pruned}")
-
-        # UPDATE THE FRONTIER TO ONLY BE THE POTENTIAL OPTIMAL LOCATIONS
+        """GUARENTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
+        #print(f"FRONTIER: {self.frontier}")
+        counts = self.get_countshashmap_neighbor_frontier(graph)
+        #print(f"COUNTS: {counts}")
+        distances = self.get_distancehasmap_neighbor_frontier(graph, surveyed_node)
+        #print(f"DISTANCES: {distances}")
+        pruned = self.get_possible_optimal_solutions(counts, distances, graph)
+        #print(f"PRUNED: {pruned}")
         self.frontier = set(pruned.keys())
 
         # WE COMPUTE THE PROBABILITIES BASED ON FREQUENCY
-        probability_mass = deepcopy(counts)
-        probability_mass[self.location] = 0 
-        probability_mass[surveyed_node] = 0 
+        probability_mass = deepcopy(pruned)
         denominator = sum(probability_mass.values())
+        #print(f"PROB MASS: {probability_mass}")
 
-        print(f"\nTHE PROBABILITY MASS IS {probability_mass}")
-
-        # UPDATE THE BELIEFS BASED ON FREQUENCIES
-        for key in probability_mass.keys(): 
-            self.beliefs[key] = probability_mass[key] / denominator 
         for key in self.beliefs.keys():
             if key not in probability_mass: self.beliefs[key] = 0 
+            else: self.beliefs[key] = probability_mass[key] / denominator 
+    
+    def init_probs_step3(self, graph, surveyed_node):
+        """GUARENTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
+        #print(f"FRONTIER: {self.frontier}")
+        counts = self.get_countshashmap_neighbor_frontier(graph)
+        #print(f"COUNTS: {counts}")
+        distances = self.get_distancehasmap_neighbor_frontier(graph, surveyed_node)
+        #print(f"DISTANCES: {distances}")
+        pruned = self.get_possible_optimal_solutions(counts, distances, graph)
+        #print(f"PRUNED: {pruned}")
+        self.frontier = set(pruned.keys())
 
-        print(f"\nTHE BELIEFS ARE NOW {self.beliefs}")
+        # WE COMPUTE THE PROBABILITIES BASED ON FREQUENCY
+        probability_mass = deepcopy(pruned)
+        denominator = sum(probability_mass.values())
+        #print(f"PROB MASS: {probability_mass}")
 
-    def normalize_beliefs(self):
-        """
-        ENSURES THAT ALL PROBABILITIES SUM TO 1
-        """
-        values_sum = sum(self.beliefs.values())
-        for node, probability in self.beliefs.items():
-            self.beliefs[node] = probability/values_sum
-        
+        for key in self.beliefs.keys():
+            if key not in probability_mass: self.beliefs[key] = 0 
+            else: self.beliefs[key] = probability_mass[key] / denominator 
+
     def survey_node(self, predator):
         """
-        HELPER:
         RETURNS (SIGNAL=T/F, NODE_SURVEYED=n_i)
         Indicates node surveyed and whether or not prey is there. 
         """
-        signal = False
+        signal = False 
         node = random.choice(self.get_highest_prob_nodes())
         if predator.location == node:
-            signal = True
+            signal = True 
             self.pred_prev_locations.append(node)
-        return signal, node
-
+        return signal, node 
+    
     def get_highest_prob_nodes(self):
         """
         HELPER:
@@ -155,3 +136,47 @@ class Agent5(Agent1):
         """
         for key in self.beliefs.keys(): 
             self.beliefs[key] = round(self.beliefs[key], k)
+
+    def normalize_beliefs(self):
+        """
+        ENSURES THAT ALL PROBABILITIES SUM TO 1
+        """
+        values_sum = sum(self.beliefs.values())
+        for node, probability in self.beliefs.items():
+            self.beliefs[node] = probability/values_sum
+
+    def get_countshashmap_neighbor_frontier(self, graph):
+        """FIND ALL THE COUNTS TO EACH NEIGHBOR IN THE POSSIBLE FRONTIER"""
+        counts = dict() 
+        for node in self.frontier: 
+            counts[node] = counts.get(node, 0) + 1 
+            for nbr in graph.nbrs[node]:
+                counts[nbr] = counts.get(nbr, 0) + 1 
+        return counts 
+    
+    def get_distancehasmap_neighbor_frontier(self, graph, surveyed_node):
+        """FIND ALL THE DISTANCES FOR EACH POSSIBLE NEIGHBOR IN THE FRONTIER"""
+        distances = {}  
+        for state in self.frontier:
+            distances[state] = min(distances.get(state, float("inf")), self.bfs(graph, self.location, state))
+            for nbr in graph.nbrs[state]:
+                distances[nbr] = min(distances.get(nbr, float("inf")), self.bfs(graph, self.location, nbr))
+        if self.location in distances: distances[self.location] = float("inf")
+        if surveyed_node in distances: distances[surveyed_node] = float("inf")
+        return distances 
+    
+    def get_possible_optimal_solutions(self, counts, distances, graph):
+        """FIND OUT ALL POSSIBLE OPTIMAL SOLUTIONS THAT CAN BE TAKEN"""
+        pruned = {}
+        for state in self.frontier: 
+            d = {} 
+            min_dist = float("inf")
+            d[state] = min(d.get(state, float("inf")), self.bfs(graph, self.location, state))
+            for nbr in graph.nbrs[state]:
+                d[nbr] = min(d.get(nbr, float("inf")), self.bfs(graph, self.location, nbr))
+            
+            min_dist = min(d.values())
+            for key in d: 
+                if d[key] == min_dist:
+                    pruned[key] = counts[key]
+        return pruned 

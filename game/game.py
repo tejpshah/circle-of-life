@@ -9,6 +9,8 @@ from game.agents.agent1 import Agent1
 from game.agents.agent2 import Agent2
 from game.agents.agent3 import Agent3
 from game.agents.agent4 import Agent4
+from game.agents.agent5 import Agent5
+from game.agents.agent6 import Agent6
 from .graph import Graph
 from .predator import Predator
 from .prey import Prey
@@ -26,17 +28,16 @@ class Game:
         # agent initializes randomly to any spot that is not occupied by predator/prey
         occupied_s = min(self.prey.location, self.predator.location)
         occupied_l = max(self.prey.location, self.predator.location)
-        agent_location_options = list(range(1, occupied_s)) + list(range(
-            occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
+        agent_location_options = list(range(1, occupied_s)) + list(range(occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
         self.agent_starting_location = random.choice(agent_location_options)
 
         # initializes an agent which allows us to call the relevant agent.
         self.agent = None
 
         # stores the trajectories of the agent/predator/prey
-        self.agent_trajectories = []
-        self.prey_trajectories = []
-        self.predator_trajectories = []
+        self.agent_trajectories = [self.agent_starting_location]
+        self.prey_trajectories = [self.prey.location]
+        self.predator_trajectories = [self.predator.location]
 
         # initializes the number of steps before timing out
         self.timeout = timeout
@@ -63,7 +64,7 @@ class Game:
         self.prey_trajectories.append(self.prey.location)
         if self.agent.location == self.prey.location:
             return 1, found_prey, found_pred
-
+ 
         self.predator.move(self.graph, self.agent)
         self.predator_trajectories.append(self.predator.location)
         if self.agent.location == self.predator.location:
@@ -82,8 +83,7 @@ class Game:
         * -1 if agent looses 
         """
         print(f"THE NEIGHBORS ARE{self.graph.nbrs}")
-        found_prey, found_pred = self.agent.move_debug(
-            self.graph, self.prey, self.predator)
+        found_prey, found_pred = self.agent.move_debug(self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
         if self.agent.location == self.prey.location:
             return 1, found_prey, found_pred
@@ -246,6 +246,85 @@ class Game:
             status = -2
 
         return status, found_prey
+    
+    def run_agent_5(self):
+        self.agent = Agent5(self.agent_starting_location, self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        while status == 0 and step_count < self.timeout:
+            status, _, found_pred = self.step()
+            step_count = step_count + 1
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_pred
+
+    def run_agent_5_debug(self):
+        self.agent = Agent5(self.agent_starting_location, self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        self.visualize_graph()
+
+        while status == 0 and step_count < self.timeout:
+            status, _, found_pred = self.step_debug()
+            step_count = step_count + 1
+            self.visualize_graph()
+
+        self.visualize_graph_video()
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_pred
+    
+    def run_agent_6(self):
+        self.agent = Agent6(self.agent_starting_location, self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        while status == 0 and step_count < self.timeout:
+            status, _, found_pred = self.step()
+            step_count = step_count + 1
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_pred
+
+    def run_agent_6_debug(self):
+        self.agent = Agent6(self.agent_starting_location, self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        self.visualize_graph()
+
+        while status == 0 and step_count < self.timeout:
+            status, _, found_pred = self.step_debug()
+            step_count = step_count + 1
+            self.visualize_graph()
+
+        self.visualize_graph_video()
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_pred
+
 
     def visualize_graph_color_map(self):
         """
