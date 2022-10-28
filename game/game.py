@@ -1,3 +1,7 @@
+"""
+SANITY CHECKED: GAME SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTION.
+"""
+
 import random
 import networkx as nx
 import matplotlib.pyplot as plt
