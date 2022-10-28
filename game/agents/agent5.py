@@ -24,6 +24,26 @@ class Agent5(Agent1):
         potential_predator = Predator(random.choice(self.get_highest_prob_nodes()))
         super().move(graph, prey, potential_predator)
         return None, len(self.pred_prev_locations)
+    
+    def move_debug(self, graph, prey, predator):
+            signal, surveyed_node = self.survey_node(predator)
+            print(f"\nTHE SIGNAL IS {signal} for surveyed node {surveyed_node}")
+            print(f"The agent's current location is {self.location}")
+
+            print(f"\nPRIOR BELIEFS: \n{self.beliefs}")
+            if signal == True: 
+                print("UPDATED PROBABILITIES INIT 1")
+                self.init_probs_step1(graph, predator)
+            elif signal == False: 
+                print("UPDATED PROBABILITIES INIT 2")
+                print(f"CURRENT FRONTIER: {self.frontier}")
+                print(f"GRAPH NEIGHBORS:  {graph.nbrs}")
+                self.init_probs_step2(graph, surveyed_node)
+
+            self.normalize_beliefs()
+            print(f"THE SUM OF THE PROBABILITIES IS {sum(self.beliefs.values())}")
+            self.round_belief_probs()
+            print(f"UPDATED BELIEFS: \n{self.beliefs}\n")
 
     def init_probs_step1(self, graph, predator):
         """
@@ -50,12 +70,16 @@ class Agent5(Agent1):
         - Update beliefs based on the number of ways to get to each place in a particular state
         """
 
+        print(f"\nTHE FRONTIER IS {self.frontier}")
+
         # FIND ALL THE COUNTS TO EACH NEIGHBOR IN THE POSSIBLE FRONTIER
         counts = dict() 
         for node in self.frontier: 
             counts[node] = counts.get(node, 0) + 1 
             for nbr in graph.nbrs[node]:
                 counts[nbr] = counts.get(nbr, 0) + 1 
+        
+        print(f"\nTHE COUNTS ARE {counts}")
 
         # FIND ALL THE DISTANCES FOR EACH POSSIBLE NEIGHBOR IN THE FRONTIER
         distances = {}  
@@ -64,11 +88,15 @@ class Agent5(Agent1):
             for nbr in graph.nbrs[state]:
                 distances[nbr] = min(distances.get(nbr, float("inf")), self.bfs(graph, self.location, nbr))
         
+        print(f"\nTHE DISTANCES ARE {counts}")
+
         # FIND OUT ALL POSSIBLE OPTIMAL SOLUTIONS THAT CAN BE TAKEN
         min_dist = min(distances.values())
         pruned = {}
         for key, dist in distances.items():
             if dist == min_dist: pruned[key] = counts[key] 
+
+        print(f"\nTHE PRUNED MAP IS {pruned}")
 
         # UPDATE THE FRONTIER TO ONLY BE THE POTENTIAL OPTIMAL LOCATIONS
         self.frontier = set(pruned.keys())
@@ -79,11 +107,15 @@ class Agent5(Agent1):
         probability_mass[surveyed_node] = 0 
         denominator = sum(probability_mass.values())
 
+        print(f"\nTHE PROBABILITY MASS IS {probability_mass}")
+
         # UPDATE THE BELIEFS BASED ON FREQUENCIES
         for key in probability_mass.keys(): 
             self.beliefs[key] = probability_mass[key] / denominator 
         for key in self.beliefs.keys():
             if key not in probability_mass: self.beliefs[key] = 0 
+
+        print(f"\nTHE BELIEFS ARE NOW {self.beliefs}")
 
     def normalize_beliefs(self):
         """
