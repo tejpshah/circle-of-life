@@ -146,6 +146,8 @@ class Agent4(Agent2):
         # UPDATE THE BELIEFS BASED ON FREQUENCIES
         for key in probability_mass.keys(): 
             self.beliefs[key] = probability_mass[key] / denominator 
+        for key in self.beliefs.keys():
+            if key not in probability_mass: self.beliefs[key] = 0 
 
     def normalize_beliefs(self):
         """
