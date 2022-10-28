@@ -211,3 +211,6 @@ def visualize(dirname, filename):
 
     return 1
 
+
+#game = Game()
+#game.run_agent_6_debug()
