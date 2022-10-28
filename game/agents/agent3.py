@@ -1,3 +1,8 @@
+"""
+A3 is sanity checked and completed.
+NO FURTHER CHANGES NECESSARY. 
+"""
+
 import random 
 from .agent1 import Agent1 
 from game.prey import Prey 
