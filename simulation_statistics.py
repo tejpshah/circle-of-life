@@ -242,4 +242,4 @@ def visualize(dirname, filename):
 
 
 #game = Game()
-#game.run_agent_6_debug()
+#game.run_agent_7_debug()
