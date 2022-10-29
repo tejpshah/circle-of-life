@@ -15,6 +15,9 @@ class Agent7(Agent1):
         self.pred_beliefs = dict() 
 
         self.init_belief_probs_1(graph, predator)
+
+        self.pred_frontier = set() 
+        self.prey_frontier = set()
     
     def move(self, graph, prey, predator):
         prey_signal, pred_signal, surveyed_node = self.survey_node(graph, prey, predator) 
@@ -65,8 +68,9 @@ class Agent7(Agent1):
     def survey_node(self, graph, prey, predator):
         prey_signal, pred_signal, node = False, False, 0 
         is_certain_where_pred_is = len({self.pred_beliefs[i] for i in range(1, graph.get_nodes()+1) if self.pred_beliefs[i] == 1}) == 1 
-
+        #print(is_certain_where_pred_is)
         if not is_certain_where_pred_is: 
+
             highest_prob_pred_nodes = self.get_highest_prob_pred_nodes()
             node = random.choice(highest_prob_pred_nodes)
         elif is_certain_where_pred_is:
@@ -223,7 +227,7 @@ class Agent7(Agent1):
     def normalize_beliefs(self):
         values_sum = sum(self.pred_beliefs.values())
         for node, probability in self.pred_beliefs.items():
-            self.pred_beliefs[node] = probability/values_sum
+            self.pred_beliefs[node] = probability/ max(values_sum, 1)
         values_sum = sum(self.prey_beliefs.values())
         for node, probability in self.prey_beliefs.items():
             self.prey_beliefs[node] = probability/values_sum

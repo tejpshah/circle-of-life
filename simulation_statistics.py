@@ -171,7 +171,7 @@ def agent7(num_simulations, nodes=50):
     found_pred = 0
     for _ in range(num_simulations):
         game = Game(nodes)
-        game_success, game_found_prey, game_found_pred = game.run_agent_6()
+        game_success, game_found_prey, game_found_pred = game.run_agent_7()
 
         # agent caught the prey = 1, predator caught the agent/timeout = 0
         agent_success.append(1 if game_success == 1 else 0)
