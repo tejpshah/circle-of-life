@@ -240,6 +240,6 @@ if __name__ == "__main__":
     #labreport_simulation_statistics_agent4()
     #simulation_statistics.visualize("data/", "simulation_statistics_partial-prey.json")
 
-    #labreport_simulation_statistics_agent5()
-    #labreport_simulation_statistics_agent6()   
-    labreport_simulation_statistics_agent7()
+    labreport_simulation_statistics_agent5()
+    labreport_simulation_statistics_agent6()   
+    #labreport_simulation_statistics_agent7()

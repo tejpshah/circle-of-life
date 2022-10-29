@@ -100,11 +100,11 @@ class Agent7(Agent1):
         #print(f"THE BOOLEAN SET IS: {boolean_set} \t is_certain_where_pred_is={is_certain_where_pred_is}")
 
         if not is_certain_where_pred_is: 
-            #print("WE ARE NOT CERTAIN WHERE PREDATOR IS!")
+            #print("WE ARE NOT CERTAIN WHERE PREDATOR IS SO WE SURVEY WRT A5!")
             highest_prob_pred_nodes = self.get_highest_prob_pred_nodes()
             node = random.choice(highest_prob_pred_nodes)
         elif is_certain_where_pred_is:
-            #print("WE ARE CERTAIN WHERE PREDATOR IS!")
+            #print("WE ARE CERTAIN WHERE PREDATOR IS AND NOT PREY SO WE SURVEY WRT A3")
             highest_prob_prey_nodes = self.get_highest_prob_prey_nodes() 
             node = random.choice(highest_prob_prey_nodes)
         

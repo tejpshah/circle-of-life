@@ -12,6 +12,7 @@ from game.agents.agent4 import Agent4
 from game.agents.agent5 import Agent5
 from game.agents.agent6 import Agent6
 from game.agents.agent7 import Agent7
+from game.agents.agent8 import Agent8
 from .graph import Graph
 from .predator import Predator
 from .prey import Prey
@@ -365,6 +366,44 @@ class Game:
 
         return status, found_prey, found_pred
 
+    def run_agent_8(self):
+        self.agent = Agent8(self.agent_starting_location, self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        while status == 0 and step_count < self.timeout:
+            status, found_prey, found_pred = self.step()
+            step_count = step_count + 1
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_prey, found_pred
+
+    def run_agent_8_debug(self):
+        self.agent = Agent8(self.agent_starting_location, self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        self.visualize_graph()
+
+        while status == 0 and step_count < self.timeout:
+            status, found_prey, found_pred = self.step_debug()
+            step_count = step_count + 1
+            self.visualize_graph()
+
+        self.visualize_graph_video()
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_prey, found_pred
 
     def visualize_graph_color_map(self):
         """
