@@ -16,6 +16,44 @@ class Agent7(Agent1):
 
         self.init_belief_probs_1(graph, predator)
     
+    def move(self, graph, prey, predator):
+        prey_signal, pred_signal, surveyed_node = self.survey_node(graph, prey, predator) 
+
+        if len(self.prev_preys) == 0: 
+            self.prey_belief_update_1(graph, surveyed_node)
+        elif prey_signal == True and len(self.prev_preys) > 0: 
+            self.prey_belief_update_2(surveyed_node)
+        elif prey_signal == False and len(self.prev_preys) > 0: 
+            self.prey_belief_update_3(graph, surveyed_node)
+
+        if pred_signal == True: self.pred_belief_update_1(graph, surveyed_node)
+        elif pred_signal == False: self.pred_belief_update_2(graph, surveyed_node)
+
+        self.normalize_beliefs() 
+        potential_prey = Prey(random.choice(self.get_highest_prob_prey_nodes()))
+        potential_pred = Predator(random.choice(self.get_highest_prob_pred_nodes()))
+        super().move(graph, potential_prey, potential_pred)
+        return len(self.prev_preys), len(self.prev_preds)
+
+    def move_debug(self, graph, prey, predator):
+        prey_signal, pred_signal, surveyed_node = self.survey_node(graph, prey, predator) 
+
+        if len(self.prev_preys) == 0: 
+            self.prey_belief_update_1(graph, surveyed_node)
+        elif prey_signal == True and len(self.prev_preys) > 0: 
+            self.prey_belief_update_2(surveyed_node)
+        elif prey_signal == False and len(self.prev_preys) > 0: 
+            self.prey_belief_update_3(graph, surveyed_node)
+
+        if pred_signal == True: self.pred_belief_update_1(graph, surveyed_node)
+        elif pred_signal == False: self.pred_belief_update_2(graph, surveyed_node)
+
+        self.normalize_beliefs() 
+        potential_prey = Prey(random.choice(self.get_highest_prob_prey_nodes()))
+        potential_pred = Predator(random.choice(self.get_highest_prob_pred_nodes()))
+        super().move(graph, potential_prey, potential_pred)
+        return len(self.prev_preys), len(self.prev_preds)
+
     def init_belief_probs_1(self, graph, predator):
         for i in range(1, graph.get_nodes() + 1):
             if i == self.location: self.prey_beliefs[i] = 0 
@@ -182,3 +220,10 @@ class Agent7(Agent1):
             if prob == PROB: nodes.append(node)
         return nodes 
     
+    def normalize_beliefs(self):
+        values_sum = sum(self.pred_beliefs.values())
+        for node, probability in self.pred_beliefs.items():
+            self.pred_beliefs[node] = probability/values_sum
+        values_sum = sum(self.prey_beliefs.values())
+        for node, probability in self.prey_beliefs.items():
+            self.prey_beliefs[node] = probability/values_sum

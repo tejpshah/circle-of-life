@@ -202,6 +202,34 @@ def labreport_simulation_statistics_agent6():
     print(
         f"Agent6: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
 
+def labreport_simulation_statistics_agent7():
+    """
+    runs 100 simulations 30 times and returns the average 
+    """
+    wins = []
+    losses = []
+    timeouts = []
+    success_rates = []
+    found_prey = [] 
+    found_pred = []
+
+    for _ in range(30):
+        simulation_wins, simulation_losses, simulation_timeouts, simulation_success, simulation_found_prey, simulation_found_pred = simulation_statistics.agent7(100, 50)
+
+        wins.append(simulation_wins)
+        losses.append(simulation_losses)
+        timeouts.append(simulation_timeouts)
+        success_rates.append(simulation_success)
+        found_prey.append(simulation_found_prey)
+        found_pred.append(simulation_found_pred)
+
+    agent_data = get_overall_simulation_statistics(wins, losses, timeouts, success_rates, found_pred=found_pred)
+    save_simulation_statistics("partial-predator", "agent7", agent_data)
+
+    print(
+        f"Agent7: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
+
+
 if __name__ == "__main__":
     
     #labreport_simulation_statistics_agent1()
