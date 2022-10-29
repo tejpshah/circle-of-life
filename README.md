@@ -1,6 +1,48 @@
 # circle-of-life-project2
  CS520 Project 2, Tej & Nandini
 
+# OCTOBER 29th, 2022 NOTES -- ACTION ITEMS
+
+## VERIFICATIONS & SANITY CHECKS & TESTING:
+- @Nandini - Sanity check that A3 works and matches assignment specifications. Specifically, check belief updates, and make sure that they are working properly in each possible scenario. 
+- @Nandini - Sanity check that A4 works and the logic looks reasonable. 
+- @Nandini - Sanity check that A5 works and matches assignment specifications. Specifically, check belief updates, and make sure that they are working properly in each possible scenario. 
+- @Nandini - Sanity check that A6 works and the logic looks reasonable. 
+- @Nandini - Sanity check that A7 works and matches assignment specifications. Specifically, check belief updates, and make sure that they are working properly in each possible scenario. 
+- @Nandini - Sanity check that A8 works and the logic looks reasonable. 
+- @Nandini - Lab Report Read through Introduction and make sure it makes sense
+- @Nandini - Lab Report Read through A1 and make sure it makes sense
+- @Nandini - Lab Report Read through A2 and make sure it makes sense
+- @Nandini - Lab Report Read through A3 and make sure it makes sense
+- @Nandini - Lab Report Read through A4 and make sure it makes sense
+- @Nandini - Lab Report Read through A5 and make sure it makes sense
+- @Nandini - Lab Report Read through A6 and make sure it makes sense
+- @Nandini - Lab Report Read through A7 and make sure it makes sense
+- @Nandini - Lab Report Read through A8 and make sure it makes sense
+- @Nandini - Lab Report Read through Lab Report Q3.1 and make sure it makes sense
+- @Nandini - Lab Report Read through Lab Report Q3.2 and make sure it makes sense
+- @Nandini - Lab Report Read through Lab Report Q3.3 and make sure it makes sense
+
+## NEXT STEPS
+- @Tej/Nandini: Implement A7 Defective Signal + Run Experiments. 
+- @Tej/Nandini: Implement A8 Defective Signal + Run Experiments. 
+- @Nandini: Implement A9 accounting for defective signal (this is tricky)
+	- Potential Ideas: If two or three readings are close to each other for predator then we're good to go
+	- Potential Ideas: Store copies of the current sensor readings and pick any one of its possible readings with highest probability
+	- Potential Ideas: Update the beliefs according to Bayes Rule (given that the sensor is defective, you update all the belief rules)
+	- Potential Ideas: https://pooyanjamshidi.github.io/csce580/project4/ as reference Q3
+	- Potential Ideas: https://pooyanjamshidi.github.io/csce580/project4/ as reference Q8 (joint particle filtering)
+	- Potential Ideas: https://core.ac.uk/download/pdf/188224232.pdf
+-@Nandini Write up LaTeX information about A9. 
+-@Nandini: Implement the bonus for when you can only move/signal. 
+-@Nandini Write up LaTeX information about A10. 
+-@Nandini Write up LaTeX Q3.4 explaining for each agent, strengths and drawbacks.
+-@Nandini: Write up LaTeX Q3.5 bonus explanation. 
+-@Nandini/Tej: Export all experiments and post all the diagrams/tables to LaTeX for the expimernatl results section.
+-@Nandini - Write up the experimental results section talking about the performance in each of the environments and detailing experiments. 
+-@Nandini/Tej - Write an automated script to generate a positive and failure case video for each agent. 
+
+
 ## Lab Report Q1.1 
 We initialize the graph with 50 nodes. 
 At each of the nodes, we have max degree of 3. 
