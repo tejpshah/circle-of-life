@@ -108,6 +108,7 @@ def agent4(num_simulations, nodes=50):
         f"Agent4: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
     return wins, losses, timeouts, round(success*100, 2), found_prey/num_simulations
 
+
 def agent5(num_simulations, nodes=50):
     """
     run simulation n times and get statistics on success
@@ -135,6 +136,7 @@ def agent5(num_simulations, nodes=50):
         f"Agent5: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
     return wins, losses, timeouts, round(success*100, 2), found_pred/num_simulations
 
+
 def agent6(num_simulations, nodes=50):
     """
     run simulation n times and get statistics on success
@@ -158,8 +160,10 @@ def agent6(num_simulations, nodes=50):
     wins = sum(agent_success)
     losses = len(agent_success) - wins - timeouts
     success = wins/(len(agent_success))
-    print(f"Agent5: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
+    print(
+        f"Agent5: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
     return wins, losses, timeouts, round(success*100, 2), found_pred/num_simulations
+
 
 def agent7(num_simulations, nodes=50):
     """
@@ -188,8 +192,10 @@ def agent7(num_simulations, nodes=50):
     wins = sum(agent_success)
     losses = len(agent_success) - wins - timeouts
     success = wins/(len(agent_success))
-    print(f"Agent7: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
+    print(
+        f"Agent7: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
     return wins, losses, timeouts, round(success*100, 2), found_prey/num_simulations, found_pred/num_simulations
+
 
 def agent8(num_simulations, nodes=50):
     """
@@ -218,8 +224,10 @@ def agent8(num_simulations, nodes=50):
     wins = sum(agent_success)
     losses = len(agent_success) - wins - timeouts
     success = wins/(len(agent_success))
-    print(f"Agent8: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
+    print(
+        f"Agent8: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
     return wins, losses, timeouts, round(success*100, 2), found_prey/num_simulations, found_pred/num_simulations
+
 
 def visualize(dirname, filename):
     """
@@ -269,7 +277,3 @@ def visualize(dirname, filename):
     # plt.show()
 
     return 1
-
-
-#game = Game()
-#game.run_agent_7_debug()
