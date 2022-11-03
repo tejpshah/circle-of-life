@@ -11,12 +11,15 @@ class Agent7(Agent1):
     def __init__(self, location, graph, predator):
         super().__init__(location)
 
+        # stores the list of all pred and prey prev locations
         self.prev_preds = []
         self.prev_preys = []
 
+        # stores prey and pred belief prob distribution
         self.prey_beliefs = dict()
         self.pred_beliefs = dict()
 
+        # initializes original prob distribution
         self.init_belief_probs_1(graph, predator)
 
         self.pred_frontier = set()
@@ -24,6 +27,9 @@ class Agent7(Agent1):
         self.prey_frontier = set()
 
     def move(self, graph, prey, predator):
+        """
+        TODO: TBD
+        """
         prey_signal, pred_signal, surveyed_node = self.survey_node(
             graph, prey, predator)
 
@@ -37,7 +43,7 @@ class Agent7(Agent1):
         if pred_signal == True:
             self.pred_belief_update_1(graph, surveyed_node)
         elif pred_signal == False:
-            self.pred_belief_update_2(graph, surveyed_node)
+            self.pred_belief_update_2(graph)
 
         self.normalize_beliefs()
         potential_prey = Prey(random.choice(
@@ -48,6 +54,9 @@ class Agent7(Agent1):
         return len(self.prev_preys), len(self.prev_preds)
 
     def move_debug(self, graph, prey, predator):
+        """
+        debug version of move
+        """
         prey_signal, pred_signal, surveyed_node = self.survey_node(
             graph, prey, predator)
         print(
@@ -95,6 +104,9 @@ class Agent7(Agent1):
         return len(self.prev_preys), len(self.prev_preds)
 
     def init_belief_probs_1(self, graph, predator):
+        """
+        CORE: INITIALIZING INITIAL PROBABILITY FOR BOTH PREY AND PREDATOR
+        """
         for i in range(1, graph.get_nodes() + 1):
             if i == self.location:
                 self.prey_beliefs[i] = 0
@@ -107,6 +119,10 @@ class Agent7(Agent1):
                 self.pred_beliefs[i] = 0
 
     def survey_node(self, graph, prey, predator):
+        """
+        RETURNS (PREY SIGNAL=T/F, PREDATOR SIGNAL=T/F, NODE_SURVEYED=n_i)
+        Indicates node surveyed and whether or not prey and predator are there. 
+        """
         prey_signal, pred_signal, node = False, False, 0
 
         boolean_set = {self.pred_beliefs[i] for i in range(
@@ -134,6 +150,13 @@ class Agent7(Agent1):
         return prey_signal, pred_signal, node
 
     def prey_belief_update_1(self, graph, surveyed_node):
+        """
+        CORE: SURVEYED NODE BUT THE PREY IS NOT THERE AND WE HAVEN'T FOUND PREY BEFORE. 
+
+        BELIEF UPDATE: 
+        P(n_i) = 1 / (n-2) for every node not agent's current location or surveyed_node
+        P(n_k) = P(n_surveyed) = 0 for the kth node containing the agent and the surveyed node
+        """
         for node, _ in self.prey_beliefs.items():
             if node == self.location or node == surveyed_node:
                 self.prey_beliefs[node] = 0
@@ -141,6 +164,13 @@ class Agent7(Agent1):
                 self.prey_beliefs[node] = 1 / (graph.get_nodes() - 2)
 
     def prey_belief_update_2(self, surveyed_node):
+        """
+        CORE: SURVEYED NODE CONTAINS PREY!
+
+        BELIEF UPDATE: 
+        P(n_surveyed) = 1
+        P(n_i) = 0 for all i != n_surveyed
+        """
         for node, _ in self.prey_beliefs.items():
             if node == surveyed_node:
                 self.prey_beliefs[node] = 1
@@ -150,6 +180,14 @@ class Agent7(Agent1):
         self.prey_frontier.add(surveyed_node)
 
     def prey_belief_update_3(self, graph, surveyed_node):
+        """
+        CORE: SURVEYED NODE DOESN'T CONTAIN PREY BUT WE FOUND A PREY BEFORE!
+
+        BELIEF UPDATE: 
+        - Given frontier F_{t-1} at t-1, determine frontier F_{t} at t, and compute # of ways to get to each element in F_{t}
+        - Remove the number of ways to get to current agent location if exists in set or current surveyed node if it exists in set
+        - Update beliefs based on the number of ways to get to each place in a particular state
+        """
         counts = dict()
         for node in self.prey_frontier:
             counts[node] = counts.get(node, 0) + 1
@@ -168,8 +206,13 @@ class Agent7(Agent1):
             if key not in probability_mass:
                 self.prey_beliefs[key] = 0
 
-    def pred_update_beliefs(self, graph, surveyed_node):
-        def get_countshashmap_neighbor_frontier():
+    def pred_update_beliefs(self, graph):
+        """
+        accounts for the movement of the easily distracted predator 
+        (60% chance moves optimally towards pred, 40% chance moves to neighbor)
+        """
+        def get_counts_hashmap_neighbor_frontier():
+            """FIND ALL THE COUNTS TO EACH NEIGHBOR IN THE POSSIBLE FRONTIER"""
             counts = dict()
             for node in self.pred_frontier:
                 counts[node] = counts.get(node, 0) + 1
@@ -177,21 +220,8 @@ class Agent7(Agent1):
                     counts[nbr] = counts.get(nbr, 0) + 1
             return counts
 
-        def get_distancehasmap_neighbor_frontier():
-            distances = {}
-            for state in self.pred_frontier:
-                distances[state] = min(distances.get(state, float(
-                    "inf")), self.bfs(graph, self.location, state))
-                for nbr in graph.nbrs[state]:
-                    distances[nbr] = min(distances.get(nbr, float(
-                        "inf")), self.bfs(graph, self.location, nbr))
-            if self.location in distances:
-                distances[self.location] = float("inf")
-            if surveyed_node in distances:
-                distances[surveyed_node] = float("inf")
-            return distances
-
-        def get_possible_optimal_solutions(counts, distances):
+        def get_possible_optimal_solutions(counts):
+            """FIND OUT ALL POSSIBLE OPTIMAL SOLUTIONS THAT CAN BE TAKEN"""
             pruned = {}
             for state in self.pred_frontier:
                 d = {}
@@ -207,37 +237,35 @@ class Agent7(Agent1):
                         pruned[key] = counts[key]
             return pruned
 
-        # print(self.pred_frontier)
+        # print(f"FRONTIER: {self.frontier}")
 
-        # 60$ chance predator is in one of the neighbors with the shortest distance to the agent
-        optimal_counts = get_countshashmap_neighbor_frontier()
-        # print(optimal_counts)
-        optimal_distances = get_distancehasmap_neighbor_frontier()
-        # print(optimal_distances)
-        optimal_pruned = get_possible_optimal_solutions(optimal_counts, optimal_distances)
-        # print(optimal_pruned)
+        optimal_counts = get_counts_hashmap_neighbor_frontier()
+
+        # 60% PROBABILITY IT MOVES OPTIMALLY
+        optimal_pruned = get_possible_optimal_solutions(optimal_counts)
         for key, value in optimal_pruned.items():
             optimal_pruned[key] = value * 0.6
-        # print(optimal_pruned)
+        # print(f"OPTIMAL COUNTS: {optimal_counts}")
+        # print(f"OPTIMAL PRUNED: {optimal_pruned}")
 
-        # 40% chance predator is in it one of its neighbors at random
+        # 40% PROBABILITY IT MOVES RANDOMLY
         random_pruned = {}
-        for nbr in graph.get_node_neighbors(self.location):
-            random_pruned[nbr] = 0.4
-        # print(random_pruned)
+        for key, value in optimal_counts.items():
+            random_pruned[key] = value * 0.4
+        # print(f"40% RANDOM PRUNED: {random_pruned}")
 
-        # all possible positions
+        # COMBINE PROBABILITIES OF PREDATOR LOCATIONS
         pruned = deepcopy(optimal_pruned)
         for key, value in random_pruned.items():
             pruned[key] = pruned.get(key, 0) + value
-        
+        # print(f"PRUNED: {pruned}")
 
-        self.pred_frontier = set(pruned.keys())
-        # print(self.pred_frontier)
+        self.frontier = set(pruned.keys())
 
+        # WE COMPUTE THE PROBABILITIES BASED ON FREQUENCY
         probability_mass = deepcopy(pruned)
-        # print(probability_mass)
         denominator = sum(probability_mass.values())
+        # print(f"PROB MASS: {probability_mass}")
 
         for key in self.pred_beliefs.keys():
             if key not in probability_mass:
@@ -246,17 +274,33 @@ class Agent7(Agent1):
                 self.pred_beliefs[key] = probability_mass[key] / denominator
 
     def pred_belief_update_1(self, graph, surveyed_node):
+        """
+        CORE: SURVEYED NODE CONTAINS PREDATOR!
+
+        Add the location of the predator to the frontier
+        Add the location of the predator to our list tracking how many times it was found
+        Update the beliefs based on the movement of the easily distracted predator 
+        """
         self.pred_frontier = set()
         self.pred_frontier.add(surveyed_node)
 
         self.prev_preds.append(surveyed_node)
 
-        self.pred_update_beliefs(graph, surveyed_node)
+        self.pred_update_beliefs(graph)
 
-    def pred_belief_update_2(self, graph, surveyed_node):
-        self.pred_update_beliefs(graph, surveyed_node)
+    def pred_belief_update_2(self, graph):
+        """
+        CORE: SURVEYED NODE DOES NOT CONTAIN PREDATOR
+
+        Update the beliefs based on the movement of the easily distracted predator 
+        """
+        self.pred_update_beliefs(graph)
 
     def get_highest_prob_pred_nodes(self):
+        """
+        HELPER:
+        RETURNS LIST OF ALL NODES OF EQUIVALENT HIGHEST PROBABILITY OF CONTAINING PRED. 
+        """
         PROB, nodes = max(self.pred_beliefs.values()), []
         for node, prob in self.pred_beliefs.items():
             if prob == PROB:
@@ -264,6 +308,10 @@ class Agent7(Agent1):
         return nodes
 
     def get_highest_prob_prey_nodes(self):
+        """
+        HELPER:
+        RETURNS LIST OF ALL NODES OF EQUIVALENT HIGHEST PROBABILITY OF CONTAINING PREY. 
+        """
         PROB, nodes = max(self.prey_beliefs.values()), []
         for node, prob in self.prey_beliefs.items():
             if prob == PROB:
@@ -271,6 +319,9 @@ class Agent7(Agent1):
         return nodes
 
     def normalize_beliefs(self):
+        """
+        ENSURES THAT ALL PROBABILITIES SUM TO 1
+        """
         values_sum = sum(self.pred_beliefs.values())
         for node, probability in self.pred_beliefs.items():
             self.pred_beliefs[node] = probability / max(values_sum, 1)
