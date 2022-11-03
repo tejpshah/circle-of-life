@@ -6,6 +6,7 @@ NO FURTHER CHANGES NECESSARY.
 import random
 from .agent import Agent
 
+
 class Agent2(Agent):
 
     def __init__(self, location):

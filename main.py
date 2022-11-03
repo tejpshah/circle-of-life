@@ -282,8 +282,10 @@ if __name__ == "__main__":
 
     # labreport_simulation_statistics_agent5()
     # labreport_simulation_statistics_agent6()
-    simulation_statistics.visualize("data/", "simulation_statistics_partial-predator.json")
+    simulation_statistics.visualize(
+        "data/", "simulation_statistics_partial-predator.json")
 
     # labreport_simulation_statistics_agent7()
     # labreport_simulation_statistics_agent8()
-    simulation_statistics.visualize("data/", "simulation_statistics_combined-partial-information.json")
+    simulation_statistics.visualize(
+        "data/", "simulation_statistics_combined-partial-information.json")

@@ -6,6 +6,7 @@ NO FURTHER CHANGES NECESSARY.
 import random
 from .agent import Agent
 
+
 class Agent1(Agent):
     def __init__(self, location):
         """stores current distances to prey/pred and nbrs dist to prey/pred"""

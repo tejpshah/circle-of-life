@@ -10,25 +10,11 @@
 - @Nandini - Sanity check that A6 works and the logic looks reasonable. 
 - @Nandini - Sanity check that A7 works and matches assignment specifications. Specifically, check belief updates, and make sure that they are working properly in each possible scenario. 
 - @Nandini - Sanity check that A8 works and the logic looks reasonable. 
-- @Nandini - Lab Report Read through Introduction and make sure it makes sense
-- @Nandini - Lab Report Read through A1 and make sure it makes sense
-- @Nandini - Lab Report Read through A2 and make sure it makes sense
-- @Nandini - Lab Report Read through A3 and make sure it makes sense
-- @Nandini - Lab Report Read through A4 and make sure it makes sense
-- @Nandini - Lab Report Read through A5 and make sure it makes sense
-- @Nandini - Lab Report Read through A6 and make sure it makes sense
-- @Nandini - Lab Report Read through A7 and make sure it makes sense
-- @Nandini - Lab Report Read through A8 and make sure it makes sense
-- @Nandini - Lab Report Read through Lab Report Q3.1 and make sure it makes sense
-- @Nandini - Lab Report Read through Lab Report Q3.2 and make sure it makes sense
-- @Nandini - Lab Report Read through Lab Report Q3.3 and make sure it makes sense
 
 ## NEXT STEPS
 - @Tej/Nandini: Implement A7 Defective Signal + Run Experiments. 
 - @Tej/Nandini: Implement A8 Defective Signal + Run Experiments. 
 - @Nandini: Implement A9 accounting for defective signal (this is tricky)
-	- Potential Ideas: If two or three readings are close to each other for predator then we're good to go
-	- Potential Ideas: Store copies of the current sensor readings and pick any one of its possible readings with highest probability
 	- Potential Ideas: Update the beliefs according to Bayes Rule (given that the sensor is defective, you update all the belief rules)
 	- Potential Ideas: https://pooyanjamshidi.github.io/csce580/project4/ as reference Q3
 	- Potential Ideas: https://pooyanjamshidi.github.io/csce580/project4/ as reference Q8 (joint particle filtering)
@@ -76,3 +62,26 @@ But, each edge needs two nodes, so 50/2 = 25 max nodes
 	⁃	@Tej - write out mathematical belief propagation updates in Lab Report for A3. 
 	⁃	@Tej - write out mathematical belief propagation updates in Lab Report for A5. 
 
+
+## Bayes 
+Suppose that you have a graph with n=50 nodes. There is a predator at node_i. At every time step, we can survey one node to update the beliefs overall of the belief that the predator is at node_i. 
+
+For the Combined Partial Information Setting:  imagine that your survey drone is defective, and that if somethingis actually occupying a node being surveyed, there is a 0.1 probability that it gets reported as unoccupied (a false negative).
+
+P(signal = True | prey exists @ node_i) = 0.9
+P(signal = False | prey exists @ node_i) = 0.1
+
+P(signal = True | prey does not exist @ node_i) = 0.1
+P(signal = False | prey does not exist @ node_i) = 0.9
+
+P(prey exists @ node_I | signal = True)
+P(prey exists @ node_I | signal = False)
+
+P(prey exists @ node_I | signal = True) = P(signal = True | prey exists @ node_i) * P(prey exists @ node_i) / P(signal = True)
+P(prey exists @ node_I | signal = False) = P(signal = False | prey exists @ node_i) * P(prey exists @ node_i) / P(signal = False)
+
+P(prey exists @ node_I | signal = True) = 0.9 * P(prey exists @ node_i) / P(signal = True)
+P(prey exists @ node_I | signal = False) = 0.1 * P(prey exists @ node_i) / P(signal = False)
+
+P(prey exists @ node_I | signal = True) = 0.9 * P(prey exists @ node_i) / (0.9 * P(prey exists @ node_i) + 0.1 * P(prey does not exist @ node_i))
+P(prey exists @ node_I | signal = False) = 0.1 * P(prey exists @ node_i) / (0.1 * P(prey exists @ node_i) + 0.9 * P(prey does not exist @ node_i))

@@ -4,6 +4,7 @@ SANITY CHECKED: AGENT SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTION.
 
 from abc import ABC, abstractmethod
 
+
 class Agent(ABC):
     def __init__(self, location):
         self.location = location
