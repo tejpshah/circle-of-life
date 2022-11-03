@@ -130,7 +130,6 @@ class Agent5(Agent1):
         # print(f"OPTIMAL COUNTS: {optimal_counts}")
         # print(f"OPTIMAL DISTANCES: {optimal_distances}")
         # print(f"OPTIMAL PRUNED: {optimal_pruned}")
-        # print(f"60% OPTIMAL PRUNED: {optimal_pruned}")
 
         # 40% PROBABILITY IT MOVES RANDOMLY
         random_pruned = {}
