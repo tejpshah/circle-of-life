@@ -37,7 +37,7 @@ class Agent8(Agent2):
         if pred_signal == True:
             self.pred_belief_update_1(graph, surveyed_node)
         elif pred_signal == False:
-            self.pred_belief_update_2(graph, surveyed_node)
+            self.pred_belief_update_2(graph)
 
         self.normalize_beliefs()
         potential_prey = Prey(random.choice(
@@ -101,7 +101,7 @@ class Agent8(Agent2):
             self.pred_belief_update_1(graph, surveyed_node)
         elif pred_signal == False:
             print("PRED BELIEF UPDATE: DISTRIBUTE PROBS MASS")
-            self.pred_belief_update_2(graph, surveyed_node)
+            self.pred_belief_update_2(graph)
         self.normalize_beliefs()
 
         print(f"\nTHE PREY BELIEFS ARE NOW: {self.prey_beliefs}\n")
@@ -198,7 +198,7 @@ class Agent8(Agent2):
             if key not in probability_mass:
                 self.prey_beliefs[key] = 0
 
-    def pred_update_beliefs(self, graph, surveyed_node):
+    def pred_update_beliefs(self, graph):
         def get_countshashmap_neighbor_frontier():
             counts = dict()
             for node in self.pred_frontier:
@@ -207,21 +207,7 @@ class Agent8(Agent2):
                     counts[nbr] = counts.get(nbr, 0) + 1
             return counts
 
-        def get_distancehasmap_neighbor_frontier():
-            distances = {}
-            for state in self.pred_frontier:
-                distances[state] = min(distances.get(state, float(
-                    "inf")), self.bfs(graph, self.location, state))
-                for nbr in graph.nbrs[state]:
-                    distances[nbr] = min(distances.get(nbr, float(
-                        "inf")), self.bfs(graph, self.location, nbr))
-            if self.location in distances:
-                distances[self.location] = float("inf")
-            if surveyed_node in distances:
-                distances[surveyed_node] = float("inf")
-            return distances
-
-        def get_possible_optimal_solutions(counts, distances):
+        def get_possible_optimal_solutions(counts):
             pruned = {}
             for state in self.pred_frontier:
                 d = {}
@@ -240,9 +226,7 @@ class Agent8(Agent2):
         # print(self.pred_frontier)
         counts = get_countshashmap_neighbor_frontier()
         # print(counts)
-        distances = get_distancehasmap_neighbor_frontier()
-        # print(distances)
-        pruned = get_possible_optimal_solutions(counts, distances)
+        pruned = get_possible_optimal_solutions(counts)
         # print(pruned)
         self.pred_frontier = set(pruned.keys())
         # print(self.pred_frontier)
@@ -263,10 +247,10 @@ class Agent8(Agent2):
 
         self.prev_preds.append(surveyed_node)
 
-        self.pred_update_beliefs(graph, surveyed_node)
+        self.pred_update_beliefs(graph)
 
-    def pred_belief_update_2(self, graph, surveyed_node):
-        self.pred_update_beliefs(graph, surveyed_node)
+    def pred_belief_update_2(self, graph):
+        self.pred_update_beliefs(graph)
 
     def get_highest_prob_pred_nodes(self):
         PROB, nodes = max(self.pred_beliefs.values()), []
