@@ -161,7 +161,7 @@ def agent6(num_simulations, nodes=50):
     losses = len(agent_success) - wins - timeouts
     success = wins/(len(agent_success))
     print(
-        f"Agent5: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
+        f"Agent6: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
     return wins, losses, timeouts, round(success*100, 2), found_pred/num_simulations
 
 

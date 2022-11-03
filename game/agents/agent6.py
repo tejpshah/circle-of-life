@@ -135,30 +135,13 @@ class Agent6(Agent2):
         # WE FOUND THE PREDATOR!
         self.pred_prev_locations.append(surveyed_node)
 
-        """GUARENTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
-        #print(f"FRONTIER: {self.frontier}")
-        counts = self.get_countshashmap_neighbor_frontier(graph)
-        #print(f"COUNTS: {counts}")
-        distances = self.get_distancehasmap_neighbor_frontier(
-            graph, surveyed_node)
-        #print(f"DISTANCES: {distances}")
-        pruned = self.get_possible_optimal_solutions(counts, distances, graph)
-        #print(f"PRUNED: {pruned}")
-        self.frontier = set(pruned.keys())
-
-        # WE COMPUTE THE PROBABILITIES BASED ON FREQUENCY
-        probability_mass = deepcopy(pruned)
-        denominator = sum(probability_mass.values())
-        #print(f"PROB MASS: {probability_mass}")
-
-        for key in self.beliefs.keys():
-            if key not in probability_mass:
-                self.beliefs[key] = 0
-            else:
-                self.beliefs[key] = probability_mass[key] / denominator
+        self.update_beliefs(graph, surveyed_node)
 
     def init_probs_step3(self, graph, surveyed_node):
-        """GUARENTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
+        self.update_beliefs(graph, surveyed_node)
+
+    def update_beliefs(self, graph, surveyed_node):
+        """GUARANTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
         #print(f"FRONTIER: {self.frontier}")
         counts = self.get_countshashmap_neighbor_frontier(graph)
         #print(f"COUNTS: {counts}")

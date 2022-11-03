@@ -31,7 +31,6 @@ class Agent5(Agent1):
         return None, len(self.pred_prev_locations)
 
     def move_debug(self, graph, prey, predator):
-
         print(f"\nTHE AGENT'S CURRENT LOCATION IS {self.location} ")
         print(f"THE CURRENT FRONTIER IS {self.frontier}")
 
@@ -78,44 +77,49 @@ class Agent5(Agent1):
         # WE FOUND THE PREDATOR!
         self.pred_prev_locations.append(surveyed_node)
 
-        """GUARENTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
-        #print(f"FRONTIER: {self.frontier}")
-        counts = self.get_countshashmap_neighbor_frontier(graph)
-        #print(f"COUNTS: {counts}")
-        distances = self.get_distancehasmap_neighbor_frontier(
-            graph, surveyed_node)
-        #print(f"DISTANCES: {distances}")
-        pruned = self.get_possible_optimal_solutions(counts, distances, graph)
-        #print(f"PRUNED: {pruned}")
-        self.frontier = set(pruned.keys())
-
-        # WE COMPUTE THE PROBABILITIES BASED ON FREQUENCY
-        probability_mass = deepcopy(pruned)
-        denominator = sum(probability_mass.values())
-        #print(f"PROB MASS: {probability_mass}")
-
-        for key in self.beliefs.keys():
-            if key not in probability_mass:
-                self.beliefs[key] = 0
-            else:
-                self.beliefs[key] = probability_mass[key] / denominator
+        self.update_beliefs(graph, surveyed_node)
 
     def init_probs_step3(self, graph, surveyed_node):
-        """GUARENTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
-        #print(f"FRONTIER: {self.frontier}")
-        counts = self.get_countshashmap_neighbor_frontier(graph)
-        #print(f"COUNTS: {counts}")
-        distances = self.get_distancehasmap_neighbor_frontier(
+        self.update_beliefs(graph, surveyed_node)
+
+    def update_beliefs(self, graph, surveyed_node):
+        """
+        The predator has a 60% chance to be in one of its neighbors with the shortest distance and 40% chance to be in one of its neighbors at random
+        """
+
+        # print(f"FRONTIER: {self.frontier}")
+
+        """Accounting for the 60% chance it is in one of the neighbors with the shortest distance"""
+        optimal_counts = self.get_countshashmap_neighbor_frontier(graph)
+        # print(f"OPTIMAL COUNTS: {optimal_counts}")
+        optimal_distances = self.get_distancehasmap_neighbor_frontier(
             graph, surveyed_node)
-        #print(f"DISTANCES: {distances}")
-        pruned = self.get_possible_optimal_solutions(counts, distances, graph)
-        #print(f"PRUNED: {pruned}")
+        # print(f"OPTIMAL DISTANCES: {optimal_distances}")
+        optimal_pruned = self.get_possible_optimal_solutions(
+            optimal_counts, optimal_distances, graph)
+        # print(f"OPTIMAL PRUNED: {optimal_pruned}")
+        for key, value in optimal_pruned.items():
+            optimal_pruned[key] = value * 0.6
+        # print(f"60% OPTIMAL PRUNED: {optimal_pruned}")
+
+        """Accounting for the 40% chance it is in one of its neighbors at random"""
+        random_pruned = {}
+        for nbr in graph.get_node_neighbors(self.location):
+            random_pruned[nbr] = 0.4
+        # print(f"40% RANDOM PRUNED: {random_pruned}")
+
+        """Combine both sets of pruned positions"""
+        pruned = deepcopy(optimal_pruned)
+        for key, value in random_pruned.items():
+            pruned[key] = pruned.get(key, 0) + value
+        # print(f"PRUNED: {pruned}")
+
         self.frontier = set(pruned.keys())
 
         # WE COMPUTE THE PROBABILITIES BASED ON FREQUENCY
         probability_mass = deepcopy(pruned)
         denominator = sum(probability_mass.values())
-        #print(f"PROB MASS: {probability_mass}")
+        # print(f"PROB MASS: {probability_mass}")
 
         for key in self.beliefs.keys():
             if key not in probability_mass:
