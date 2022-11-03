@@ -8,7 +8,6 @@ from .agent1 import Agent1
 
 class Agent5(Agent1):
     def __init__(self, location, graph, predator):
-
         # intiailize the location of the agent here
         super().__init__(location)
 
@@ -19,18 +18,30 @@ class Agent5(Agent1):
         self.init_probs_step1(graph, predator)
 
     def move(self, graph, prey, predator):
+        """
+        surveys the node with the highest probability of containing the predator
+        updates the beliefs
+        * if signal is false, update beliefs based on probability that the prey could be in each position
+        * if signal is true, beliefs is a one-hot vector
+        assume the predator is at one of the locations with the highest probability, chosen randomly
+        move according to the rules of agent1 
+        """
         signal, surveyed_node = self.survey_node(predator)
         if signal == True:
             self.init_probs_step2(graph, surveyed_node)
         elif signal == False:
             self.init_probs_step3(graph, surveyed_node)
         self.normalize_beliefs()
+
         potential_predator = PredatorED(
             random.choice(self.get_highest_prob_nodes()))
         super().move(graph, prey, potential_predator)
         return None, len(self.pred_prev_locations)
 
     def move_debug(self, graph, prey, predator):
+        """
+        debug version of move
+        """
         print(f"\nTHE AGENT'S CURRENT LOCATION IS {self.location} ")
         print(f"THE CURRENT FRONTIER IS {self.frontier}")
 
@@ -60,7 +71,13 @@ class Agent5(Agent1):
         return None, len(self.pred_prev_locations)
 
     def init_probs_step1(self, graph, predator):
-        """INITIALIZES 1 PROB TO PRED LOCATION 0 EVERYWHERE ELSE STARTING OUT"""
+        """
+        CORE: INITIALIZING INITIAL PROBABILITY
+
+        BELIEF UPDATE STEP 1: 
+        P(n_i) = 0 for every node not containing predator 
+        P(n_k) = 1 for the kth node containing the predator
+        """
         self.beliefs = dict()
         for i in range(1, graph.get_nodes() + 1):
             if i == predator.location:
@@ -70,6 +87,13 @@ class Agent5(Agent1):
         self.frontier = set()
 
     def init_probs_step2(self, graph, surveyed_node):
+        """
+        CORE: SURVEYED NODE CONTAINS PREDATOR!
+
+        Add the location of the predator to the frontier
+        Add the location of the predator to our list tracking how many times it was found
+        Update the beliefs based on the movement of the easily distracted predator 
+        """
         # SETS UP THE CURRENT FRONTIER FOR PROBABILITY MASS REDISTRIBUTION
         self.frontier = set()
         self.frontier.add(surveyed_node)
@@ -80,35 +104,41 @@ class Agent5(Agent1):
         self.update_beliefs(graph, surveyed_node)
 
     def init_probs_step3(self, graph, surveyed_node):
+        """
+        CORE: SURVEYED NODE DOES NOT CONTAIN PREDATOR
+
+        Update the beliefs based on the movement of the easily distracted predator 
+        """
         self.update_beliefs(graph, surveyed_node)
 
     def update_beliefs(self, graph, surveyed_node):
         """
-        Predator has a 60% chance to be in one of its neighbors with the shortest distance and 40% chance to be in one of its neighbors at random
+        accounts for the movement of the easily distracted predator 
+        (60% chance moves optimally towards pred, 40% chance moves to neighbor)
         """
-
         # print(f"FRONTIER: {self.frontier}")
 
-        # 60% chance it is in one of the neighbors with the shortest distance
-        optimal_counts = self.get_countshashmap_neighbor_frontier(graph)
-        # print(f"OPTIMAL COUNTS: {optimal_counts}")
-        optimal_distances = self.get_distancehasmap_neighbor_frontier(
+        optimal_counts = self.get_counts_hashmap_neighbor_frontier(graph)
+
+        # 60% PROBABILITY IT MOVES OPTIMALLY
+        optimal_distances = self.get_distance_hashmap_neighbor_frontier(
             graph, surveyed_node)
-        # print(f"OPTIMAL DISTANCES: {optimal_distances}")
         optimal_pruned = self.get_possible_optimal_solutions(
             optimal_counts, optimal_distances, graph)
-        # print(f"OPTIMAL PRUNED: {optimal_pruned}")
         for key, value in optimal_pruned.items():
             optimal_pruned[key] = value * 0.6
+        # print(f"OPTIMAL COUNTS: {optimal_counts}")
+        # print(f"OPTIMAL DISTANCES: {optimal_distances}")
+        # print(f"OPTIMAL PRUNED: {optimal_pruned}")
         # print(f"60% OPTIMAL PRUNED: {optimal_pruned}")
 
-        # Accounting for the 40% chance it is in one of its neighbors at random
+        # 40% PROBABILITY IT MOVES RANDOMLY
         random_pruned = {}
-        for nbr in graph.get_node_neighbors(self.location):
-            random_pruned[nbr] = 0.4
+        for key, value in optimal_counts.items():
+            random_pruned[key] = value * 0.4
         # print(f"40% RANDOM PRUNED: {random_pruned}")
 
-        # Combine both sets of pruned positions
+        # COMBINE PROBABILITIES OF PREDATOR LOCATIONS
         pruned = deepcopy(optimal_pruned)
         for key, value in random_pruned.items():
             pruned[key] = pruned.get(key, 0) + value
@@ -166,7 +196,7 @@ class Agent5(Agent1):
         for node, probability in self.beliefs.items():
             self.beliefs[node] = probability/values_sum
 
-    def get_countshashmap_neighbor_frontier(self, graph):
+    def get_counts_hashmap_neighbor_frontier(self, graph):
         """FIND ALL THE COUNTS TO EACH NEIGHBOR IN THE POSSIBLE FRONTIER"""
         counts = dict()
         for node in self.frontier:
@@ -175,7 +205,7 @@ class Agent5(Agent1):
                 counts[nbr] = counts.get(nbr, 0) + 1
         return counts
 
-    def get_distancehasmap_neighbor_frontier(self, graph, surveyed_node):
+    def get_distance_hashmap_neighbor_frontier(self, graph, surveyed_node):
         """FIND ALL THE DISTANCES FOR EACH POSSIBLE NEIGHBOR IN THE FRONTIER"""
         distances = {}
         for state in self.frontier:
