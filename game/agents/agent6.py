@@ -30,7 +30,7 @@ class Agent6(Agent2):
         if signal == True:
             self.init_probs_step2(graph, surveyed_node)
         elif signal == False:
-            self.init_probs_step3(graph, surveyed_node)
+            self.init_probs_step3(graph)
         self.normalize_beliefs()
         potential_predator = PredatorED(
             random.choice(self.get_highest_prob_nodes()))
@@ -83,7 +83,7 @@ class Agent6(Agent2):
             self.init_probs_step2(graph, surveyed_node)
             print("INIT PROBS 2")
         elif signal == False:
-            self.init_probs_step3(graph, surveyed_node)
+            self.init_probs_step3(graph)
             print("INIT PROBS 3")
         self.normalize_beliefs()
         print(f"THE SUM OF THE PROBABILITIES IS {sum(self.beliefs.values())}")
@@ -156,25 +156,22 @@ class Agent6(Agent2):
         # WE FOUND THE PREDATOR!
         self.pred_prev_locations.append(surveyed_node)
 
-        self.update_beliefs(graph, surveyed_node)
+        self.update_beliefs(graph)
 
-    def init_probs_step3(self, graph, surveyed_node):
+    def init_probs_step3(self, graph):
         """
         CORE: SURVEYED NODE DOES NOT CONTAIN PREDATOR
 
         Update the beliefs based on the movement of the optimally moving predator 
         """
-        self.update_beliefs(graph, surveyed_node)
+        self.update_beliefs(graph)
 
-    def update_beliefs(self, graph, surveyed_node):
+    def update_beliefs(self, graph):
         """GUARANTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
         # print(f"FRONTIER: {self.frontier}")
         counts = self.get_counts_hashmap_neighbor_frontier(graph)
         # print(f"COUNTS: {counts}")
-        distances = self.get_distance_hashmap_neighbor_frontier(
-            graph, surveyed_node)
-        # print(f"DISTANCES: {distances}")
-        pruned = self.get_possible_optimal_solutions(counts, distances, graph)
+        pruned = self.get_possible_optimal_solutions(counts, graph)
         # print(f"PRUNED: {pruned}")
         self.frontier = set(pruned.keys())
 
@@ -237,22 +234,7 @@ class Agent6(Agent2):
                 counts[nbr] = counts.get(nbr, 0) + 1
         return counts
 
-    def get_distance_hashmap_neighbor_frontier(self, graph, surveyed_node):
-        """FIND ALL THE DISTANCES FOR EACH POSSIBLE NEIGHBOR IN THE FRONTIER"""
-        distances = {}
-        for state in self.frontier:
-            distances[state] = min(distances.get(state, float(
-                "inf")), self.bfs(graph, self.location, state))
-            for nbr in graph.nbrs[state]:
-                distances[nbr] = min(distances.get(nbr, float(
-                    "inf")), self.bfs(graph, self.location, nbr))
-        if self.location in distances:
-            distances[self.location] = float("inf")
-        if surveyed_node in distances:
-            distances[surveyed_node] = float("inf")
-        return distances
-
-    def get_possible_optimal_solutions(self, counts, distances, graph):
+    def get_possible_optimal_solutions(self, counts, graph):
         """FIND OUT ALL POSSIBLE OPTIMAL SOLUTIONS THAT CAN BE TAKEN"""
         pruned = {}
         for state in self.frontier:
