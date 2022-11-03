@@ -13,7 +13,7 @@ from .agent1 import Agent1
 
 class Agent3(Agent1):
     def __init__(self, location, graph):
-        # initiailize agent location
+        # initialize agent location
         super().__init__(location)
 
         # initializes agent belief prob dist
