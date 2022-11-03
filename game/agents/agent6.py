@@ -1,7 +1,9 @@
 import random
-from .agent2 import Agent2
 from copy import deepcopy
-from game.predator import Predator
+
+from game.predatored import PredatorED
+
+from .agent2 import Agent2
 
 
 class Agent6(Agent2):
@@ -23,7 +25,7 @@ class Agent6(Agent2):
         elif signal == False:
             self.init_probs_step3(graph, surveyed_node)
         self.normalize_beliefs()
-        potential_predator = Predator(
+        potential_predator = PredatorED(
             random.choice(self.get_highest_prob_nodes()))
 
         # MODIFICATION OF A2 CORE LOGIC TO ACCOUNT FOR UNCERTAINTY
@@ -80,7 +82,7 @@ class Agent6(Agent2):
 
         print(f"UPDATED BELIEFS: {self.beliefs}")
 
-        potential_predator = Predator(
+        potential_predator = PredatorED(
             random.choice(self.get_highest_prob_nodes()))
         print(
             f"WE PREDICT A PREDATOR TO EXIST AT {potential_predator.location}")

@@ -1,8 +1,10 @@
 import random
-from .agent1 import Agent1
 from copy import deepcopy
-from game.predator import Predator
+
+from game.predatored import PredatorED
 from game.prey import Prey
+
+from .agent1 import Agent1
 
 
 class Agent7(Agent1):
@@ -40,7 +42,7 @@ class Agent7(Agent1):
         self.normalize_beliefs()
         potential_prey = Prey(random.choice(
             self.get_highest_prob_prey_nodes()))
-        potential_pred = Predator(random.choice(
+        potential_pred = PredatorED(random.choice(
             self.get_highest_prob_pred_nodes()))
         super().move(graph, potential_prey, potential_pred)
         return len(self.prev_preys), len(self.prev_preds)
@@ -77,7 +79,7 @@ class Agent7(Agent1):
 
         potential_prey = Prey(random.choice(
             self.get_highest_prob_prey_nodes()))
-        potential_pred = Predator(random.choice(
+        potential_pred = PredatorED(random.choice(
             self.get_highest_prob_pred_nodes()))
 
         print(f"\nTHE ACTUAL AGENT IS AT {self.location}")

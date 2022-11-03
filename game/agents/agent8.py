@@ -1,8 +1,10 @@
 import random
-from .agent2 import Agent2
 from copy import deepcopy
-from game.predator import Predator
+
+from game.predatored import PredatorED
 from game.prey import Prey
+
+from .agent2 import Agent2
 
 
 class Agent8(Agent2):
@@ -40,7 +42,7 @@ class Agent8(Agent2):
         self.normalize_beliefs()
         potential_prey = Prey(random.choice(
             self.get_highest_prob_prey_nodes()))
-        potential_pred = Predator(random.choice(
+        potential_pred = PredatorED(random.choice(
             self.get_highest_prob_pred_nodes()))
 
         # MODIFICATION OF A2 CORE LOGIC TO ACCOUNT FOR UNCERTAINTY
@@ -107,7 +109,7 @@ class Agent8(Agent2):
 
         potential_prey = Prey(random.choice(
             self.get_highest_prob_prey_nodes()))
-        potential_pred = Predator(random.choice(
+        potential_pred = PredatorED(random.choice(
             self.get_highest_prob_pred_nodes()))
 
         print(f"\nTHE ACTUAL AGENT IS AT {self.location}")

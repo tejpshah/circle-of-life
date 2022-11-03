@@ -4,9 +4,11 @@ NO FURTHER CHANGES NECESSARY.
 """
 
 import random
-from .agent2 import Agent2
-from game.prey import Prey
 from copy import deepcopy
+
+from game.prey import Prey
+
+from .agent2 import Agent2
 
 
 class Agent4(Agent2):

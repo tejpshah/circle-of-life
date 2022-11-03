@@ -1,7 +1,9 @@
 import random
-from .agent1 import Agent1
 from copy import deepcopy
-from game.predator import Predator
+
+from game.predatored import PredatorED
+
+from .agent1 import Agent1
 
 
 class Agent5(Agent1):
@@ -23,7 +25,7 @@ class Agent5(Agent1):
         elif signal == False:
             self.init_probs_step3(graph, surveyed_node)
         self.normalize_beliefs()
-        potential_predator = Predator(
+        potential_predator = PredatorED(
             random.choice(self.get_highest_prob_nodes()))
         super().move(graph, prey, potential_predator)
         return None, len(self.pred_prev_locations)
@@ -50,7 +52,7 @@ class Agent5(Agent1):
 
         print(f"UPDATED BELIEFS: {self.beliefs}")
 
-        potential_predator = Predator(
+        potential_predator = PredatorED(
             random.choice(self.get_highest_prob_nodes()))
         print(
             f"WE PREDICT A PREDATOR TO EXIST AT {potential_predator.location}")

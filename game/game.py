@@ -15,6 +15,7 @@ from game.agents.agent7 import Agent7
 from game.agents.agent8 import Agent8
 from .graph import Graph
 from .predator import Predator
+from .predatored import PredatorED
 from .prey import Prey
 
 
@@ -23,13 +24,16 @@ class Game:
         # initializes the graph on which agents/prey/predator play
         self.graph = Graph(nodes=nodes)
 
-        # initializes prey/predator locations to be random from nodes 1...50
+        # initializes prey location to be random from nodes 1...50
         self.prey = Prey(random.randint(1, self.graph.get_nodes()))
-        self.predator = Predator(random.randint(1, self.graph.get_nodes()))
+
+        # determines the predator location which will be used to create the specific predator
+        self.predator = None
+        self.predator_location = random.randint(1, self.graph.get_nodes())
 
         # agent initializes randomly to any spot that is not occupied by predator/prey
-        occupied_s = min(self.prey.location, self.predator.location)
-        occupied_l = max(self.prey.location, self.predator.location)
+        occupied_s = min(self.prey.location, self.predator_location)
+        occupied_l = max(self.prey.location, self.predator_location)
         agent_location_options = list(range(1, occupied_s)) + list(range(
             occupied_s+1, occupied_l)) + list(range(occupied_l+1, self.graph.get_nodes() + 1))
         self.agent_starting_location = random.choice(agent_location_options)
@@ -40,7 +44,7 @@ class Game:
         # stores the trajectories of the agent/predator/prey
         self.agent_trajectories = [self.agent_starting_location]
         self.prey_trajectories = [self.prey.location]
-        self.predator_trajectories = [self.predator.location]
+        self.predator_trajectories = [self.predator_location]
 
         # initializes the number of steps before timing out
         self.timeout = timeout
@@ -108,6 +112,7 @@ class Game:
         return 0, found_prey, found_pred
 
     def run_agent_1(self):
+        self.predator = Predator(self.predator_location)
         self.agent = Agent1(self.agent_starting_location)
 
         status = 0
@@ -124,6 +129,7 @@ class Game:
         return status
 
     def run_agent_1_debug(self):
+        self.predator = Predator(self.predator_location)
         self.agent = Agent1(self.agent_starting_location)
         self.visualize_graph()
 
@@ -144,6 +150,7 @@ class Game:
         return status
 
     def run_agent_2(self):
+        self.predator = Predator(self.predator_location)
         self.agent = Agent2(self.agent_starting_location)
 
         status = 0
@@ -160,6 +167,7 @@ class Game:
         return status
 
     def run_agent_2_debug(self):
+        self.predator = Predator(self.predator_location)
         self.agent = Agent2(self.agent_starting_location)
         self.visualize_graph()
 
@@ -180,6 +188,7 @@ class Game:
         return status
 
     def run_agent_3(self):
+        self.predator = Predator(self.predator_location)
         self.agent = Agent3(self.agent_starting_location, self.graph)
 
         status = 0
@@ -197,6 +206,7 @@ class Game:
         return status, found_prey
 
     def run_agent_3_debug(self):
+        self.predator = Predator(self.predator_location)
         self.agent = Agent3(self.agent_starting_location, self.graph)
         status = 0
         step_count = 0
@@ -216,6 +226,7 @@ class Game:
         return status, found_prey
 
     def run_agent_4(self):
+        self.predator = Predator(self.predator_location)
         self.agent = Agent4(self.agent_starting_location, self.graph)
 
         status = 0
@@ -233,6 +244,7 @@ class Game:
         return status, found_prey
 
     def run_agent_4_debug(self):
+        self.predator = Predator(self.predator_location)
         self.agent = Agent4(self.agent_starting_location, self.graph)
 
         status = 0
@@ -253,6 +265,7 @@ class Game:
         return status, found_prey
 
     def run_agent_5(self):
+        self.predator = PredatorED(self.predator_location)
         self.agent = Agent5(self.agent_starting_location,
                             self.graph, self.predator)
 
@@ -271,6 +284,7 @@ class Game:
         return status, found_pred
 
     def run_agent_5_debug(self):
+        self.predator = PredatorED(self.predator_location)
         self.agent = Agent5(self.agent_starting_location,
                             self.graph, self.predator)
 
@@ -294,6 +308,7 @@ class Game:
         return status, found_pred
 
     def run_agent_6(self):
+        self.predator = PredatorED(self.predator_location)
         self.agent = Agent6(self.agent_starting_location,
                             self.graph, self.predator)
 
@@ -312,6 +327,7 @@ class Game:
         return status, found_pred
 
     def run_agent_6_debug(self):
+        self.predator = PredatorED(self.predator_location)
         self.agent = Agent6(self.agent_starting_location,
                             self.graph, self.predator)
 
@@ -335,6 +351,7 @@ class Game:
         return status, found_pred
 
     def run_agent_7(self):
+        self.predator = PredatorED(self.predator_location)
         self.agent = Agent7(self.agent_starting_location,
                             self.graph, self.predator)
 
@@ -353,6 +370,7 @@ class Game:
         return status, found_prey, found_pred
 
     def run_agent_7_debug(self):
+        self.predator = PredatorED(self.predator_location)
         self.agent = Agent7(self.agent_starting_location,
                             self.graph, self.predator)
 
@@ -376,6 +394,7 @@ class Game:
         return status, found_prey, found_pred
 
     def run_agent_8(self):
+        self.predator = PredatorED(self.predator_location)
         self.agent = Agent8(self.agent_starting_location,
                             self.graph, self.predator)
 
@@ -394,6 +413,7 @@ class Game:
         return status, found_prey, found_pred
 
     def run_agent_8_debug(self):
+        self.predator = PredatorED(self.predator_location)
         self.agent = Agent8(self.agent_starting_location,
                             self.graph, self.predator)
 
