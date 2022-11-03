@@ -84,12 +84,12 @@ class Agent5(Agent1):
 
     def update_beliefs(self, graph, surveyed_node):
         """
-        The predator has a 60% chance to be in one of its neighbors with the shortest distance and 40% chance to be in one of its neighbors at random
+        Predator has a 60% chance to be in one of its neighbors with the shortest distance and 40% chance to be in one of its neighbors at random
         """
 
         # print(f"FRONTIER: {self.frontier}")
 
-        """Accounting for the 60% chance it is in one of the neighbors with the shortest distance"""
+        # 60% chance it is in one of the neighbors with the shortest distance
         optimal_counts = self.get_countshashmap_neighbor_frontier(graph)
         # print(f"OPTIMAL COUNTS: {optimal_counts}")
         optimal_distances = self.get_distancehasmap_neighbor_frontier(
@@ -102,13 +102,13 @@ class Agent5(Agent1):
             optimal_pruned[key] = value * 0.6
         # print(f"60% OPTIMAL PRUNED: {optimal_pruned}")
 
-        """Accounting for the 40% chance it is in one of its neighbors at random"""
+        # Accounting for the 40% chance it is in one of its neighbors at random
         random_pruned = {}
         for nbr in graph.get_node_neighbors(self.location):
             random_pruned[nbr] = 0.4
         # print(f"40% RANDOM PRUNED: {random_pruned}")
 
-        """Combine both sets of pruned positions"""
+        # Combine both sets of pruned positions
         pruned = deepcopy(optimal_pruned)
         for key, value in random_pruned.items():
             pruned[key] = pruned.get(key, 0) + value
