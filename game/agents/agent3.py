@@ -26,7 +26,7 @@ class Agent3(Agent1):
         """
         surveys the node with the highest probability of containing the prey
         updates the beliefs
-        * if signal is false and we have previously not found prey, reinitialize beliefs to 1/48 for all nodes other than surveyed and agent current location
+        * if signal is false and we have previously not found prey, reinitialize beliefs to 1/(n - 2) for all nodes other than surveyed and agent current location
         * if signal is false and we have previously found prey, update beliefs based on probability that the prey could be in each position
         * if signal is true, beliefs is a one-hot vector
         assume the prey is at one of the locations with the highest probability, chosen randomly
