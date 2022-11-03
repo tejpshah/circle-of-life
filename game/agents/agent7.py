@@ -208,12 +208,30 @@ class Agent7(Agent1):
             return pruned
 
         # print(self.pred_frontier)
-        counts = get_countshashmap_neighbor_frontier()
-        # print(counts)
-        distances = get_distancehasmap_neighbor_frontier()
-        # print(distances)
-        pruned = get_possible_optimal_solutions(counts, distances)
-        # print(pruned)
+
+        # 60$ chance predator is in one of the neighbors with the shortest distance to the agent
+        optimal_counts = get_countshashmap_neighbor_frontier()
+        # print(optimal_counts)
+        optimal_distances = get_distancehasmap_neighbor_frontier()
+        # print(optimal_distances)
+        optimal_pruned = get_possible_optimal_solutions(optimal_counts, optimal_distances)
+        # print(optimal_pruned)
+        for key, value in optimal_pruned.items():
+            optimal_pruned[key] = value * 0.6
+        # print(optimal_pruned)
+
+        # 40% chance predator is in it one of its neighbors at random
+        random_pruned = {}
+        for nbr in graph.get_node_neighbors(self.location):
+            random_pruned[nbr] = 0.4
+        # print(random_pruned)
+
+        # all possible positions
+        pruned = deepcopy(optimal_pruned)
+        for key, value in random_pruned.items():
+            pruned[key] = pruned.get(key, 0) + value
+        
+
         self.pred_frontier = set(pruned.keys())
         # print(self.pred_frontier)
 

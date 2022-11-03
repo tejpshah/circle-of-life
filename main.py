@@ -271,19 +271,18 @@ def labreport_simulation_statistics_agent8():
 
 
 if __name__ == "__main__":
-
     # labreport_simulation_statistics_agent1()
     # labreport_simulation_statistics_agent2()
-    # simulation_statistics.visualize("data/", "simulation_statistics_complete.json")
+    simulation_statistics.visualize("data/", "simulation_statistics_complete.json")
 
     # labreport_simulation_statistics_agent3()
     # labreport_simulation_statistics_agent4()
-    # simulation_statistics.visualize("data/", "simulation_statistics_partial-prey.json")
+    simulation_statistics.visualize("data/", "simulation_statistics_partial-prey.json")
 
     # labreport_simulation_statistics_agent5()
     # labreport_simulation_statistics_agent6()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_partial-predator.json")
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_partial-predator.json")
 
     # labreport_simulation_statistics_agent7()
     # labreport_simulation_statistics_agent8()

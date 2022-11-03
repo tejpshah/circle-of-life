@@ -23,6 +23,15 @@ class Agent3(Agent1):
         self.prev_prey_locations = []
 
     def move(self, graph, prey, predator):
+        """
+        surveys the node with the highest probability of containing the prey
+        updates the beliefs
+        * if signal is false and we have previously not found prey, reinitialize beliefs to 1/48 for all nodes other than surveyed and agent current location
+        * if signal is false and we have previously found prey, update beliefs based on probability that the prey could be in each position
+        * if signal is true, beliefs is a one-hot vector
+        assume the prey is at one of the locations with the highest probability, chosen randomly
+        move according to the rules of agent1 
+        """
         signal, surveyed_node = self.survey_node(prey)
         if len(self.prev_prey_locations) == 0:
             self.init_probs_step2(graph, surveyed_node)
@@ -37,6 +46,9 @@ class Agent3(Agent1):
         return len(self.prev_prey_locations), None
 
     def move_debug(self, graph, prey, predator):
+        """
+        debug version of move
+        """
         signal, surveyed_node = self.survey_node(prey)
         print(f"\nTHE SIGNAL IS {signal} for surveyed node {surveyed_node}")
         print(f"The agent's current location is {self.location}")
