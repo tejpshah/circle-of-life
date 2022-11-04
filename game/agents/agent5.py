@@ -1,14 +1,12 @@
 import random
 from copy import deepcopy
-
 from game.predatored import PredatorED
-
 from .agent1 import Agent1
 
 
 class Agent5(Agent1):
     def __init__(self, location, graph, predator):
-        # intiailize the location of the agent here
+        # initialize the location of the agent here
         super().__init__(location)
 
         # stores the list of all pred prev locations

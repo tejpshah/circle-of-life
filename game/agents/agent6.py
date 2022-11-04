@@ -1,14 +1,12 @@
 import random
 from copy import deepcopy
-
 from game.predatored import PredatorED
-
 from .agent2 import Agent2
 
 
 class Agent6(Agent2):
     def __init__(self, location, graph, predator):
-        # intiailize the location of the agent here
+        # initialize the location of the agent here
         super().__init__(location)
 
         # stores the list of all pred prev locations
@@ -24,7 +22,7 @@ class Agent6(Agent2):
         * if signal is false, update beliefs based on probability that the prey could be in each position
         * if signal is true, beliefs is a one-hot vector
         assume the predator is at one of the locations with the highest probability, chosen randomly
-        move according to the rules of agent2, accounting for uncertainity 
+        move according to a modified version of agent2 that accounts for uncertainity 
         """
         signal, surveyed_node = self.survey_node(predator)
         if signal == True:
@@ -167,7 +165,10 @@ class Agent6(Agent2):
         self.update_beliefs(graph)
 
     def update_beliefs(self, graph):
-        """GUARANTEED TO BE IN ANY OF OF ITS NEIGHBORS OF SHORTEST DISTANCE WITH EQUAL PROBS"""
+        """
+        updates beliefs working under the assumption that the predator will always move optimally
+        therefore, predator is guaranteed to be in any one of its neighbors of shortest distance with equal probability
+        """
         # print(f"FRONTIER: {self.frontier}")
         counts = self.get_counts_hashmap_neighbor_frontier(graph)
         # print(f"COUNTS: {counts}")

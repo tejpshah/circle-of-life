@@ -1,21 +1,20 @@
-"""
-A2 is sanity checked and completed.
-NO FURTHER CHANGES NECESSARY. 
-"""
-
 from .agent import Agent
 
 
 class Agent2(Agent):
 
     def __init__(self, location):
-        """initializes with same starting information as A1"""
+        # initialize agent location
         super().__init__(location)
+
+        # store nbrs dist to prey/pred
         self.nbrs_prey_dist = dict()
         self.nbrs_pred_dist = dict()
 
     def get_nbrs_min_prey_dist(self):
-        """retrieves all nbrs of minimal length to prey"""
+        """
+        retrieves all nbrs of minimal length to prey
+        """
         min_dist_to_prey = float("inf")
         for value in self.nbrs_pred_dist.values():
             min_dist_to_prey = min(min_dist_to_prey, value)
@@ -58,9 +57,7 @@ class Agent2(Agent):
 
     def move_debug(self, graph, prey, predator):
         """
-        debug version
-        keep taking the neighbor that that minimizes the distance to the prey 
-        if the predator is a distance of 2 edges away, choose the neighbor that maximizes distance away from predator. 
+        debug version of move
         """
         self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
         self.curr_pred_dist = self.bfs(graph, self.location, predator.location)

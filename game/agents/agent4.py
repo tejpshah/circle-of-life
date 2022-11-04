@@ -1,19 +1,12 @@
-"""
-A4 is sanity checked and completed.
-NO FURTHER CHANGES NECESSARY. 
-"""
-
 import random
 from copy import deepcopy
-
 from game.prey import Prey
-
 from .agent2 import Agent2
 
 
 class Agent4(Agent2):
     def __init__(self, location, graph):
-        # initiailize agent location
+        # initialize agent location
         super().__init__(location)
 
         # initializes agent belief prob dist

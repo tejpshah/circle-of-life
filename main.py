@@ -333,7 +333,7 @@ def labreport_simulation_statistics_agent8B():
         f"Agent8B: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
 
 
-def labreport_simulation_statistics_agent7DU():
+def labreport_simulation_statistics_agent7C():
     """
     runs 100 simulations 30 times and returns the average 
     """
@@ -385,11 +385,11 @@ if __name__ == "__main__":
     simulation_statistics.visualize(
         "data/", "simulation_statistics_combined-partial.json")
 
-    labreport_simulation_statistics_agent7B()
-    labreport_simulation_statistics_agent8B()
+    # labreport_simulation_statistics_agent7B()
+    # labreport_simulation_statistics_agent8B()
     simulation_statistics.visualize(
         "data/", "simulation_statistics_combined-partial-defective.json")
 
-    # labreport_simulation_statistics_agent7DU()
+    # labreport_simulation_statistics_agent7C()
     # simulation_statistics.visualize(
     #     "data/", "simulation_statistics_combined-partial-defective-updated.json")

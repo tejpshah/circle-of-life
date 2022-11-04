@@ -1,7 +1,3 @@
-"""
-SANITY CHECKED: PREDATOR SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTION.
-"""
-
 import random
 
 
@@ -41,7 +37,7 @@ class Predator:
         """
         moves the agent to the neighbor with minimum BFS distance to agent
         """
-        
+
         agent_location = agent.location
 
         # get a list of the predator's neighbors

@@ -1,10 +1,4 @@
-"""
-SANITY CHECKED: GRAPH SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTION.
-"""
-
 import random
-import matplotlib.pyplot as plt
-import networkx as nx
 
 
 class Graph:
@@ -96,14 +90,3 @@ class Graph:
                     self.add_edge(v, w)
                     self.edges_added += 1
         #print(f"The number of edges added is {self.edges_added}")
-
-
-"""
-LAB REPORT Q1.1: 
-hashmap = {}
-for i in range(100000):
-    g = Graph()
-    hashmap[g.edges_added] = hashmap.get(g.edges_added,0) + 1
-print(hashmap)
-print(sum(hashmap.values()))
-"""

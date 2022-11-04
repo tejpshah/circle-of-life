@@ -1,7 +1,3 @@
-"""
-SANITY CHECKED: AGENT SHOULD BE WORKING AS SPECIFIED PER ASSIGNMENT DESCRIPTION.
-"""
-
 from abc import ABC, abstractmethod
 
 

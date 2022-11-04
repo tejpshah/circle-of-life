@@ -1,24 +1,22 @@
-"""
-A1 is sanity checked and completed.
-NO FURTHER CHANGES NECESSARY. 
-"""
-
 import random
-
 from .agent import Agent
 
 
 class Agent1(Agent):
     def __init__(self, location):
-        """stores current distances to prey/pred and nbrs dist to prey/pred"""
+        # initialize agent location
         super().__init__(location)
+
+        # store current distances to prey/pred and nbrs dist to prey/pred
         self.curr_prey_dist = 0
         self.curr_pred_dist = 0
         self.nbrs_prey_dist = dict()
         self.nbrs_pred_dist = dict()
 
     def move(self, graph, prey, predator):
-        """updates location based on assignment specifications given."""
+        """
+        updates location based on assignment specifications given
+        """
         self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
         self.curr_pred_dist = self.bfs(graph, self.location, predator.location)
         self.nbrs_prey_dist = dict()
@@ -63,7 +61,9 @@ class Agent1(Agent):
         return None, None
 
     def move_debug(self, graph, prey, predator):
-        """debug version of moving A1"""
+        """
+        debug version of move
+        """
         self.curr_prey_dist = self.bfs(graph, self.location, prey.location)
         self.curr_pred_dist = self.bfs(graph, self.location, predator.location)
         self.nbrs_prey_dist = dict()

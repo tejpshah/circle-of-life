@@ -1,14 +1,13 @@
 import random
 from copy import deepcopy
-
 from game.predatored import PredatorED
 from game.prey import Prey
-
 from .agent1 import Agent1
 
 
 class Agent7C(Agent1):
     def __init__(self, location, graph, predator):
+        # initialize the location of the agent here
         super().__init__(location)
 
         # stores the list of all pred and prey prev locations
@@ -30,7 +29,7 @@ class Agent7C(Agent1):
         """
         surveys the node with the highest probability of containing the predator if not certain of predator location; otherwise, surveys the nod with the highest probability of containing the prey 
         updates the beliefs
-        assume the predator and prey is at one of the locations with the highest probability, chosen randomly
+        assume the predator and prey are at one of the locations with the highest probability, chosen randomly
         move according to the rules of agent1 
         """
         prey_signal, pred_signal, surveyed_node = self.survey_node(
@@ -125,6 +124,7 @@ class Agent7C(Agent1):
         """
         RETURNS (PREY SIGNAL=T/F, PREDATOR SIGNAL=T/F, NODE_SURVEYED=n_i)
         Indicates node surveyed and whether or not prey and predator are there. 
+        Follows the noisy-survey environment
         """
         prey_signal, pred_signal, node = False, False, 0
 
