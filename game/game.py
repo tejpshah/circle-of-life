@@ -13,8 +13,9 @@ from game.agents.agent5 import Agent5
 from game.agents.agent6 import Agent6
 from game.agents.agent7 import Agent7
 from game.agents.agent8 import Agent8
-from game.agents.agent7d import Agent7D
-from game.agents.agent8d import Agent8D
+from game.agents.agent7b import Agent7B
+from game.agents.agent8b import Agent8B
+from game.agents.agent7c import Agent7C
 from .graph import Graph
 from .predator import Predator
 from .predatored import PredatorED
@@ -438,10 +439,10 @@ class Game:
 
         return status, found_prey, found_pred
 
-    def run_agent_7D(self):
+    def run_agent_7B(self):
         self.predator = PredatorED(self.predator_location)
-        self.agent = Agent7D(self.agent_starting_location,
-                            self.graph, self.predator)
+        self.agent = Agent7B(self.agent_starting_location,
+                             self.graph, self.predator)
 
         status = 0
         step_count = 0
@@ -457,10 +458,10 @@ class Game:
 
         return status, found_prey, found_pred
 
-    def run_agent_7D_debug(self):
+    def run_agent_7B_debug(self):
         self.predator = PredatorED(self.predator_location)
-        self.agent = Agent7D(self.agent_starting_location,
-                            self.graph, self.predator)
+        self.agent = Agent7B(self.agent_starting_location,
+                             self.graph, self.predator)
 
         status = 0
         step_count = 0
@@ -481,10 +482,10 @@ class Game:
 
         return status, found_prey, found_pred
 
-    def run_agent_8D(self):
+    def run_agent_8B(self):
         self.predator = PredatorED(self.predator_location)
-        self.agent = Agent8D(self.agent_starting_location,
-                            self.graph, self.predator)
+        self.agent = Agent8B(self.agent_starting_location,
+                             self.graph, self.predator)
 
         status = 0
         step_count = 0
@@ -500,10 +501,10 @@ class Game:
 
         return status, found_prey, found_pred
 
-    def run_agent_8D_debug(self):
+    def run_agent_8B_debug(self):
         self.predator = PredatorED(self.predator_location)
-        self.agent = Agent8D(self.agent_starting_location,
-                            self.graph, self.predator)
+        self.agent = Agent8B(self.agent_starting_location,
+                             self.graph, self.predator)
 
         status = 0
         step_count = 0
@@ -523,7 +524,50 @@ class Game:
             status = -2
 
         return status, found_prey, found_pred
-        
+
+    def run_agent_7C(self):
+        self.predator = PredatorED(self.predator_location)
+        self.agent = Agent7C(self.agent_starting_location,
+                             self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        while status == 0 and step_count < self.timeout:
+            status, found_prey, found_pred = self.step()
+            step_count = step_count + 1
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_prey, found_pred
+
+    def run_agent_7C_debug(self):
+        self.predator = PredatorED(self.predator_location)
+        self.agent = Agent7C(self.agent_starting_location,
+                             self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        self.visualize_graph()
+
+        while status == 0 and step_count < self.timeout:
+            status, found_prey, found_pred = self.step_debug()
+            step_count = step_count + 1
+            self.visualize_graph()
+
+        self.visualize_graph_video()
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_prey, found_pred
+
     def visualize_graph_color_map(self):
         """
         grey: unoccupied node

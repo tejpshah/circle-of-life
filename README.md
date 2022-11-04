@@ -40,3 +40,8 @@ P(prey exists @ node_I | signal = False) = 0.1 * P(prey exists @ node_i) / P(sig
 
 P(prey exists @ node_I | signal = True) = 0.9 * P(prey exists @ node_i) / (0.9 * P(prey exists @ node_i) + 0.1 * P(prey does not exist @ node_i))
 P(prey exists @ node_I | signal = False) = 0.1 * P(prey exists @ node_i) / (0.1 * P(prey exists @ node_i) + 0.9 * P(prey does not exist @ node_i))
+
+
+P(prey exists @ node_I | signal = False) = 0.1 * P(prey exists @ node_i) / (0.1 * P(prey exists @ node_i) + 0.9 * P(prey does not exist @ node_i))
+*** (0.1 * 1/48) / (0.1 * 1/48 + 0.9 * 47/48) = 0.002
+*** (0.1 * 0.2) / (0.1 * 0.2 + 0.9 * 0.8) = 0.027

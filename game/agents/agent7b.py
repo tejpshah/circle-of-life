@@ -7,7 +7,7 @@ from game.prey import Prey
 from .agent1 import Agent1
 
 
-class Agent7D(Agent1):
+class Agent7B(Agent1):
     def __init__(self, location, graph, predator):
         super().__init__(location)
 
