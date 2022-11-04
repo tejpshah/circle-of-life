@@ -28,7 +28,10 @@ class Agent7B(Agent1):
 
     def move(self, graph, prey, predator):
         """
-        TODO: TBD
+        surveys the node with the highest probability of containing the predator if not certain of predator location; otherwise, surveys the nod with the highest probability of containing the prey 
+        updates the beliefs
+        assume the predator and prey is at one of the locations with the highest probability, chosen randomly
+        move according to the rules of agent1 
         """
         prey_signal, pred_signal, surveyed_node = self.survey_node(
             graph, prey, predator)
