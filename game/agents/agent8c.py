@@ -2,10 +2,10 @@ import random
 from copy import deepcopy
 from game.predatored import PredatorED
 from game.prey import Prey
-from .agent1 import Agent1
+from .agent2 import Agent2
 
 
-class Agent7C(Agent1):
+class Agent8C(Agent2):
     def __init__(self, location, graph, predator):
         # initialize the location of the agent here
         super().__init__(location)
@@ -30,7 +30,7 @@ class Agent7C(Agent1):
         surveys the node with the highest probability of containing the predator if not certain of predator location; otherwise, surveys the nod with the highest probability of containing the prey 
         updates the beliefs
         assume the predator and prey are at one of the locations with the highest probability, chosen randomly
-        move according to the rules of agent1 
+        move according to a modified version of agent2 that accounts for uncertainity 
         """
         prey_signal, pred_signal, surveyed_node = self.survey_node(
             graph, prey, predator)
@@ -52,7 +52,37 @@ class Agent7C(Agent1):
             self.get_highest_prob_prey_nodes()))
         potential_pred = PredatorED(random.choice(
             self.get_highest_prob_pred_nodes()))
-        super().move(graph, potential_prey, potential_pred)
+
+        # MODIFICATION OF A2 CORE LOGIC TO ACCOUNT FOR UNCERTAINTY
+        distances = {}
+        for nbr in graph.nbrs[self.location]:
+            distances[nbr] = self.bfs(graph, nbr, potential_pred.location)
+        max_dist = max(distances.values())
+
+        action = 0
+        for key, val in distances.items():
+            if val == max_dist:
+                action = key
+
+        # WE ARE MORE CERTAIN ABOUT PREDATOR LOCATION
+        if len(self.prev_preys) == 0:
+            self.location = action
+        # WE KEEP RUNNING AWAY MAXIMALLY FROM PREDATOR UNTIL WE KNOW WHERE PREY IS
+        else:
+            distances = {}
+            for nbr in graph.nbrs[self.location]:
+                distances[nbr] = self.bfs(graph, nbr, potential_prey.location)
+            min_dist = min(distances.values())
+
+            for key, val in distances.items():
+                if val == min_dist:
+                    action = key
+
+            potential_predator_distance = self.bfs(
+                graph, self.location, potential_pred.location)
+
+            if potential_predator_distance > 3 or self.pred_beliefs[action] <= 0.3 or self.prey_beliefs[action] >= 0.3:
+                self.location = action
         return len(self.prev_preys), len(self.prev_preds)
 
     def move_debug(self, graph, prey, predator):
@@ -237,11 +267,10 @@ class Agent7C(Agent1):
 
     def pred_update_beliefs(self, graph):
         """
-        accounts for the movement of the easily distracted predator 
-        (60% chance moves optimally towards pred, 40% chance moves to neighbor)
+        updates beliefs working under the assumption that the predator will always move optimally
+        therefore, predator is guaranteed to be in any one of its neighbors of shortest distance with equal probability
         """
-        def get_counts_hashmap_neighbor_frontier():
-            """FIND ALL THE COUNTS TO EACH NEIGHBOR IN THE POSSIBLE FRONTIER"""
+        def get_countshashmap_neighbor_frontier():
             counts = dict()
             for node in self.pred_frontier:
                 counts[node] = counts.get(node, 0) + 1
@@ -250,7 +279,6 @@ class Agent7C(Agent1):
             return counts
 
         def get_possible_optimal_solutions(counts):
-            """FIND OUT ALL POSSIBLE OPTIMAL SOLUTIONS THAT CAN BE TAKEN"""
             pruned = {}
             for state in self.pred_frontier:
                 d = {}
@@ -266,35 +294,17 @@ class Agent7C(Agent1):
                         pruned[key] = counts[key]
             return pruned
 
-        # print(f"FRONTIER: {self.frontier}")
+        # print(self.pred_frontier)
+        counts = get_countshashmap_neighbor_frontier()
+        # print(counts)
+        pruned = get_possible_optimal_solutions(counts)
+        # print(pruned)
+        self.pred_frontier = set(pruned.keys())
+        # print(self.pred_frontier)
 
-        optimal_counts = get_counts_hashmap_neighbor_frontier()
-
-        # 60% PROBABILITY IT MOVES OPTIMALLY
-        optimal_pruned = get_possible_optimal_solutions(optimal_counts)
-        for key, value in optimal_pruned.items():
-            optimal_pruned[key] = value * 0.6
-        # print(f"OPTIMAL COUNTS: {optimal_counts}")
-        # print(f"OPTIMAL PRUNED: {optimal_pruned}")
-
-        # 40% PROBABILITY IT MOVES RANDOMLY
-        random_pruned = {}
-        for key, value in optimal_counts.items():
-            random_pruned[key] = value * 0.4
-        # print(f"40% RANDOM PRUNED: {random_pruned}")
-
-        # COMBINE PROBABILITIES OF PREDATOR LOCATIONS
-        pruned = deepcopy(optimal_pruned)
-        for key, value in random_pruned.items():
-            pruned[key] = pruned.get(key, 0) + value
-        # print(f"PRUNED: {pruned}")
-
-        self.frontier = set(pruned.keys())
-
-        # WE COMPUTE THE PROBABILITIES BASED ON FREQUENCY
         probability_mass = deepcopy(pruned)
+        # print(probability_mass)
         denominator = sum(probability_mass.values())
-        # print(f"PROB MASS: {probability_mass}")
 
         for key in self.pred_beliefs.keys():
             if key not in probability_mass:

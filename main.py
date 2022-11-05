@@ -344,9 +344,9 @@ def labreport_simulation_statistics_agent7C():
     found_prey = []
     found_pred = []
 
-    for _ in range(1):
+    for _ in range(30):
         simulation_wins, simulation_losses, simulation_timeouts, simulation_success, simulation_found_prey, simulation_found_pred = simulation_statistics.agent7C(
-            1, 50)
+            100, 50)
 
         wins.append(simulation_wins)
         losses.append(simulation_losses)
@@ -362,6 +362,37 @@ def labreport_simulation_statistics_agent7C():
 
     print(
         f"Agent7C: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
+
+
+def labreport_simulation_statistics_agent8C():
+    """
+    runs 100 simulations 30 times and returns the average 
+    """
+    wins = []
+    losses = []
+    timeouts = []
+    success_rates = []
+    found_prey = []
+    found_pred = []
+
+    for _ in range(30):
+        simulation_wins, simulation_losses, simulation_timeouts, simulation_success, simulation_found_prey, simulation_found_pred = simulation_statistics.agent8C(
+            100, 50)
+
+        wins.append(simulation_wins)
+        losses.append(simulation_losses)
+        timeouts.append(simulation_timeouts)
+        success_rates.append(simulation_success)
+        found_prey.append(simulation_found_prey)
+        found_pred.append(simulation_found_pred)
+
+    agent_data = get_overall_simulation_statistics(
+        wins, losses, timeouts, success_rates, found_prey=found_prey, found_pred=found_pred)
+    save_simulation_statistics(
+        "combined-partial-defective-updated", "agent8", agent_data)
+
+    print(
+        f"Agent8C: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
 
 
 if __name__ == "__main__":
@@ -390,6 +421,7 @@ if __name__ == "__main__":
     simulation_statistics.visualize(
         "data/", "simulation_statistics_combined-partial-defective.json")
 
-    # labreport_simulation_statistics_agent7C()
-    # simulation_statistics.visualize(
-    #     "data/", "simulation_statistics_combined-partial-defective-updated.json")
+    labreport_simulation_statistics_agent7C()
+    labreport_simulation_statistics_agent8C()
+    simulation_statistics.visualize(
+        "data/", "simulation_statistics_combined-partial-defective-updated.json")

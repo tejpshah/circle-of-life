@@ -12,6 +12,7 @@ from game.agents.agent8 import Agent8
 from game.agents.agent7b import Agent7B
 from game.agents.agent8b import Agent8B
 from game.agents.agent7c import Agent7C
+from game.agents.agent8c import Agent8C
 from .graph import Graph
 from .predator import Predator
 from .predatored import PredatorED
@@ -543,6 +544,49 @@ class Game:
     def run_agent_7C_debug(self):
         self.predator = PredatorED(self.predator_location)
         self.agent = Agent7C(self.agent_starting_location,
+                             self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        self.visualize_graph()
+
+        while status == 0 and step_count < self.timeout:
+            status, found_prey, found_pred = self.step_debug()
+            step_count = step_count + 1
+            self.visualize_graph()
+
+        self.visualize_graph_video()
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_prey, found_pred
+
+    def run_agent_8C(self):
+        self.predator = PredatorED(self.predator_location)
+        self.agent = Agent8C(self.agent_starting_location,
+                             self.graph, self.predator)
+
+        status = 0
+        step_count = 0
+        found_pred = 0
+
+        while status == 0 and step_count < self.timeout:
+            status, found_prey, found_pred = self.step()
+            step_count = step_count + 1
+
+        # agent timed out
+        if status == 0:
+            status = -2
+
+        return status, found_prey, found_pred
+
+    def run_agent_8C_debug(self):
+        self.predator = PredatorED(self.predator_location)
+        self.agent = Agent8C(self.agent_starting_location,
                              self.graph, self.predator)
 
         status = 0
