@@ -82,7 +82,7 @@ class Agent7(Agent1):
             self.pred_belief_update_1(graph, surveyed_node)
         elif pred_signal == False:
             print("PRED BELIEF UPDATE: DISTRIBUTE PROBS MASS")
-            self.pred_belief_update_2(graph, surveyed_node)
+            self.pred_belief_update_2(graph)
         self.normalize_beliefs()
 
         print(f"\nTHE PREY BELIEFS ARE NOW: {self.prey_beliefs}\n")
