@@ -151,9 +151,6 @@ class Agent6(Agent2):
         self.frontier = set()
         self.frontier.add(surveyed_node)
 
-        # WE FOUND THE PREDATOR!
-        self.pred_prev_locations.append(surveyed_node)
-
         self.update_beliefs(graph)
 
     def init_probs_step3(self, graph):

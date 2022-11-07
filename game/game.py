@@ -49,6 +49,22 @@ class Game:
         # initializes the number of steps before timing out
         self.timeout = timeout
 
+        # initializes the number of steps the agent took
+        self.steps = 0
+
+    def step_return_values(self, status, found_prey, found_pred):
+        """
+        returns status & found_prey/found_pred as a percentage of total moves
+        """
+        if found_prey is not None and found_pred is not None:
+            return status, found_prey/self.steps * 100, found_pred/self.steps * 100
+        elif found_prey is not None:
+            return status, found_prey/self.steps * 100, found_pred
+        elif found_pred is not None:
+            return status, found_prey, found_pred/self.steps * 100
+        else:
+            return status, found_prey, found_pred
+
     def step(self):
         """
         moves the agent, prey, and predator one step
@@ -60,25 +76,27 @@ class Game:
 
         also returns number of times agent knew the exact location of the prey and the pred in the partial information settings
         """
+        self.steps = self.steps + 1
+
         found_prey, found_pred = self.agent.move(
             self.graph, self.prey, self.predator)
         self.agent_trajectories.append(self.agent.location)
         if self.agent.location == self.prey.location:
-            return 1, found_prey, found_pred
+            return self.step_return_values(1, found_prey, found_pred)
         if self.agent.location == self.predator.location:
-            return -1, found_prey, found_pred
+            return self.step_return_values(-1, found_prey, found_pred)
 
         self.prey.move(self.graph)
         self.prey_trajectories.append(self.prey.location)
         if self.agent.location == self.prey.location:
-            return 1, found_prey, found_pred
+            return self.step_return_values(1, found_prey, found_pred)
 
         self.predator.move(self.graph, self.agent)
         self.predator_trajectories.append(self.predator.location)
         if self.agent.location == self.predator.location:
-            return -1, found_prey, found_pred
+            return self.step_return_values(-1, found_prey, found_pred)
 
-        return 0, found_prey, found_pred
+        return self.step_return_values(0, found_prey, found_pred)
 
     def step_debug(self):
         """

@@ -132,9 +132,6 @@ class Agent4(Agent2):
         self.frontier = set()
         self.frontier.add(surveyed_node)
 
-        # ADDS IT TO PREVOIUS PREY LOCATIONS SEEN
-        self.prev_prey_locations.append(surveyed_node)
-
     def init_probs_step4(self, graph, surveyed_node):
         """
         CORE: SURVEYED NODE DOESN'T CONTAIN PREY BUT WE FOUND A PREY BEFORE!

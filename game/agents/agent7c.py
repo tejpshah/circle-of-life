@@ -313,8 +313,6 @@ class Agent7C(Agent1):
         self.pred_frontier = set()
         self.pred_frontier.add(surveyed_node)
 
-        self.prev_preds.append(surveyed_node)
-
         self.pred_update_beliefs(graph)
 
     def pred_belief_update_2(self, graph, surveyed_node):
