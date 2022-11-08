@@ -81,7 +81,7 @@ class Agent8(Agent2):
             potential_predator_distance = self.bfs(
                 graph, self.location, potential_pred.location)
 
-            if potential_predator_distance > 3 or self.pred_beliefs[action] <= 0.3 or self.prey_beliefs[action] >= 0.3:
+            if potential_predator_distance > 3 or self.pred_beliefs[action] <= 0.4 or self.prey_beliefs[action] >= 0.2:
                 self.location = action
         return len(self.prev_preys), len(self.prev_preds)
 
