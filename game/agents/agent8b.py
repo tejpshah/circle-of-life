@@ -33,10 +33,12 @@ class Agent8B(Agent8):
 
         if predator.location == node:
             pred_signal = True if random.uniform(0, 1) <= 0.9 else False
-            self.prev_preds.append(node)
+            if pred_signal:
+                self.prev_preds.append(node)
         if prey.location == node:
             prey_signal = True if random.uniform(0, 1) <= 0.9 else False
-            self.prev_preys.append(node)
+            if prey_signal:
+                self.prev_preys.append(node)
 
         return prey_signal, pred_signal, node
 
