@@ -45,7 +45,7 @@ class Agent7(Agent1):
         if pred_signal == True:
             self.pred_belief_update_1(graph, surveyed_node)
         elif pred_signal == False:
-            self.pred_belief_update_2(graph)
+            self.pred_belief_update_2(graph, surveyed_node)
 
         self.normalize_beliefs()
         potential_prey = Prey(random.choice(
@@ -82,7 +82,7 @@ class Agent7(Agent1):
             self.pred_belief_update_1(graph, surveyed_node)
         elif pred_signal == False:
             print("PRED BELIEF UPDATE: DISTRIBUTE PROBS MASS")
-            self.pred_belief_update_2(graph)
+            self.pred_belief_update_2(graph, surveyed_node)
         self.normalize_beliefs()
 
         print(f"\nTHE PREY BELIEFS ARE NOW: {self.prey_beliefs}\n")
@@ -288,7 +288,7 @@ class Agent7(Agent1):
 
         self.pred_update_beliefs(graph)
 
-    def pred_belief_update_2(self, graph):
+    def pred_belief_update_2(self, graph, surveyed_node):
         """
         CORE: SURVEYED NODE DOES NOT CONTAIN PREDATOR
 
