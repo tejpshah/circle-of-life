@@ -31,16 +31,22 @@ class Agent7B(Agent7):
             highest_prob_prey_nodes = self.get_highest_prob_prey_nodes()
             node = random.choice(highest_prob_prey_nodes)
 
+        defective = False if random.uniform(0, 1) <= 0.9 else True
         if predator.location == node:
-            pred_signal = True if random.uniform(0, 1) <= 0.9 else False
-            if pred_signal:
-                self.prev_preds.append(node)
+            pred_signal = True
         if prey.location == node:
-            prey_signal = True if random.uniform(0, 1) <= 0.9 else False
+            prey_signal = True
+
+        if not defective:
             if prey_signal:
                 self.prev_preys.append(node)
-
-        return prey_signal, pred_signal, node
+            if pred_signal:
+                self.prev_preds.append(node)
+            return prey_signal, pred_signal, node
+        else:
+            prey_signal = False
+            pred_signal = False
+            return prey_signal, pred_signal, node
 
     def prey_belief_update_3(self, graph, surveyed_node):
         """
