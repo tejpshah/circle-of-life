@@ -191,7 +191,7 @@ class Agent9(Agent8C):
                     surveyed_node_update_beliefs_antibelief
 
     def get_reward(self, prey_distance, pred_distance):
-        return (self.A)*pred_distance**(self.B) + (prey_distance**(self.C)) 
+        return (self.A)*pred_distance**(self.B) + 1/(prey_distance**(self.C)) 
 
     def get_action(self, graph, predicted_prey, predicted_pred):
         distances = {}

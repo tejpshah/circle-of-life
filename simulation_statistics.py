@@ -509,6 +509,7 @@ def agent9testing():
                     vals.append((max_A, max_B, max_C))
 
     print("HELLO")
+    print(vals)
     print(max_wins)
     print(max_A)
     print(max_B)
