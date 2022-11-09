@@ -108,11 +108,13 @@ class Agent8C(Agent8B):
 
         self.pred_update_beliefs(graph)
 
+        surveyed_node_new_pred_antibelief = 1 - surveyed_node_new_pred_belief
+        surveyed_node_update_beliefs_antibelief = max(1 -
+                                                      self.pred_beliefs[surveyed_node], 0.0001)
+
         for key, value in self.pred_beliefs.items():
             if key == surveyed_node:
-                self.pred_beliefs[key] = value * \
-                    (1 - surveyed_node_new_pred_belief) + \
-                    surveyed_node_new_pred_belief
+                self.pred_beliefs[key] = surveyed_node_new_pred_belief
             else:
-                self.pred_beliefs[key] = value * \
-                    (1 - surveyed_node_new_pred_belief)
+                self.pred_beliefs[key] = value * surveyed_node_new_pred_antibelief / \
+                    surveyed_node_update_beliefs_antibelief
