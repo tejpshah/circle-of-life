@@ -484,7 +484,7 @@ def agent9testing():
 
     vals = []
 
-    for A in np.linspace(0.0,1.0,50):
+    for A in np.linspace(0.1,1.0,50):
         for B in np.linspace(0.0,1.0,50):
             for C in np.linspace(0.0,1.0,50):
                 agent_success = []
