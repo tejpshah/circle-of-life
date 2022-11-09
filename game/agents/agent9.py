@@ -6,9 +6,13 @@ from .agent8c import Agent8C
 
 
 class Agent9(Agent8C):
-    def __init__(self, location, graph, predator):
+    def __init__(self, location, graph, predator, A, B, C):
         # initialize the location of the agent, graph, predator here
         super().__init__(location, graph, predator)
+
+        self.A = A
+        self.B = B
+        self.C = C
 
     def move(self, graph, prey, predator):
         """
@@ -38,6 +42,9 @@ class Agent9(Agent8C):
         potential_pred = PredatorED(random.choice(
             self.get_highest_prob_pred_nodes()))
 
+        self.location = self.get_action(graph, potential_prey, potential_pred)
+
+        """
         # MODIFICATION OF A2 CORE LOGIC TO ACCOUNT FOR UNCERTAINTY
         distances = {}
         for nbr in graph.nbrs[self.location]:
@@ -68,6 +75,7 @@ class Agent9(Agent8C):
 
             if potential_predator_distance > 3 or self.pred_beliefs[action] <= 0.4 or self.prey_beliefs[action] >= 0.2:
                 self.location = action
+        """
         return len(self.prev_preys), len(self.prev_preds)
 
     def get_prey_noisy_survey_belief(self, surveyed_node):
@@ -181,3 +189,34 @@ class Agent9(Agent8C):
             else:
                 self.pred_beliefs[key] = value * surveyed_node_new_pred_antibelief / \
                     surveyed_node_update_beliefs_antibelief
+
+    def get_reward(self, prey_distance, pred_distance):
+        return (self.A)*pred_distance**(self.B) + 1/(prey_distance**(self.C)) 
+
+    def get_action(self, graph, predicted_prey, predicted_pred):
+        distances = {}
+        for nbr in graph.nbrs[self.location]:
+            d_prey = self.bfs(graph, predicted_prey.location, nbr)
+            d_pred = self.bfs(graph, predicted_pred.location, nbr)
+            d_prey = d_prey if d_prey > 0 else 100
+            d_pred = d_pred if d_pred > 0 else 100
+            distances[nbr] = (d_prey, d_pred)
+
+        scores = {}
+        for nbr, value in distances.items():
+            # print(type(value[1]))
+            # print(type(value[0]))
+            # print(value[0])
+            # print(value[1])
+            # scores[nbr] = 5*value[1]**(0.4) + 3/(value[0]**(2))
+            # print(type(scores.get(nbr)))
+            # print(scores.get(nbr))
+            scores[nbr] = self.get_reward(value[0], value[1])
+
+        goal_value = max(scores.values())
+        potential_actions = []
+        for nbr, value in scores.items():
+            if value == goal_value:
+                potential_actions.append(nbr)
+
+        return random.choice(potential_actions)

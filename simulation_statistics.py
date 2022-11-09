@@ -471,3 +471,39 @@ def visualize(dirname, filename):
     # plt.show()
 
     return 1
+
+import numpy as np 
+def agent9testing():
+    """
+    run simulation n times and get statistics on success
+    """
+    max_wins = 0
+    max_A = 0
+    max_B = 0
+    max_C = 0
+
+    for A in np.linspace(0.0,1.0,50):
+        for B in np.linspace(0.0,1.0,50):
+            for C in np.linspace(0.0,1.0,50):
+                agent_success = []
+                for _ in range(30):
+                    game = Game(50)
+                    game_success, _, _ = game.run_agent_9(A, B, C)
+
+                    # agent caught the prey = 1, predator caught the agent/timeout = 0
+                    agent_success.append(1 if game_success == 1 else 0)
+                
+                wins = sum(agent_success)
+                if wins > max_wins:
+                    max_wins = wins
+                    max_A = A
+                    max_B = B
+                    max_C = C
+                    print("updated: " + str(max_wins))
+                    print(f'updated: {max_wins}, A: {max_A}, B: {max_B}, C: {max_C}')
+
+    print("HELLO")
+    print(wins)
+    print(max_A)
+    print(max_B)
+    print(max_C)

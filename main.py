@@ -491,3 +491,5 @@ if __name__ == "__main__":
     # labreport_simulation_statistics_agent10()
     simulation_statistics.visualize(
         "data/", "simulation_statistics_bonus.json")
+
+    simulation_statistics.agent9testing()
