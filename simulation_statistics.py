@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import matplotlib.pyplot as plt
 import numpy as np
 from game.game import Game
@@ -357,6 +358,38 @@ def agent8C(num_simulations, nodes=50):
     return wins, losses, timeouts, round(success*100, 2), found_prey/num_simulations, found_pred/num_simulations
 
 
+def agent9(num_simulations, nodes=50):
+    """
+    run simulation n times and get statistics on success
+    """
+    agent_success = []
+    timeouts = 0
+    found_prey = 0
+    found_pred = 0
+    for _ in range(num_simulations):
+        game = Game(nodes)
+        game_success, game_found_prey, game_found_pred = game.run_agent_9()
+
+        # agent caught the prey = 1, predator caught the agent/timeout = 0
+        agent_success.append(1 if game_success == 1 else 0)
+
+        # timeout if game_success returns -2
+        timeouts = timeouts + 1 if game_success == -2 else timeouts
+
+        # stores how often the agent knew where the prey was
+        found_pred = found_pred + game_found_pred
+
+        # stores how often the agent knew where the prey was
+        found_prey = found_prey + game_found_prey
+
+    wins = sum(agent_success)
+    losses = len(agent_success) - wins - timeouts
+    success = wins/(len(agent_success))
+    print(
+        f"Agent9: Wins: {wins}\tLosses: {losses}\tTimeouts: {timeouts}\tSuccess Rate: {round(success*100,2)}%")
+    return wins, losses, timeouts, round(success*100, 2), found_prey/num_simulations, found_pred/num_simulations
+
+
 def agent10(num_simulations, nodes=50):
     """
     run simulation n times and get statistics on success
@@ -406,7 +439,8 @@ def visualize(dirname, filename):
     means = []
     stds = []
     for agent, value in data.items():
-        agents.append(f'{agent[:-1].capitalize()} {agent[-1]}')
+        agent_split = re.split(r'(\d+)', agent)
+        agents.append(f'{agent_split[0].capitalize()} {agent_split[1]}')
         success_rates = value['success-rates']
         np_success_rates = np.array(success_rates)
         means.append(np.mean(np_success_rates))
