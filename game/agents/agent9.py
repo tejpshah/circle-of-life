@@ -195,7 +195,8 @@ class Agent9(Agent8C):
 
     def get_action(self, graph, predicted_prey, predicted_pred):
         distances = {}
-        for nbr in graph.nbrs[self.location]:
+        locs = graph.nbrs[self.location] + [self.location]
+        for nbr in locs:
             d_prey = self.bfs(graph, predicted_prey.location, nbr)
             d_pred = self.bfs(graph, predicted_pred.location, nbr)
             d_prey = d_prey if d_prey > 0 else 100

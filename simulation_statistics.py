@@ -482,11 +482,13 @@ def agent9testing():
     max_B = 0
     max_C = 0
 
+    vals = []
+
     for A in np.linspace(0.0,1.0,50):
         for B in np.linspace(0.0,1.0,50):
             for C in np.linspace(0.0,1.0,50):
                 agent_success = []
-                for _ in range(30):
+                for _ in range(100):
                     game = Game(50)
                     game_success, _, _ = game.run_agent_9(A, B, C)
 
@@ -501,9 +503,13 @@ def agent9testing():
                     max_C = C
                     print("updated: " + str(max_wins))
                     print(f'updated: {max_wins}, A: {max_A}, B: {max_B}, C: {max_C}')
+                    vals.clear()
+                    vals.append((max_A, max_B, max_C))
+                elif wins == max_wins:
+                    vals.append((max_A, max_B, max_C))
 
     print("HELLO")
-    print(wins)
+    print(max_wins)
     print(max_A)
     print(max_B)
     print(max_C)
