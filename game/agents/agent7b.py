@@ -46,7 +46,8 @@ class Agent7B(Agent7):
             if pred_signal:
                 self.prev_preds.append(node)
 
-            self.maybe_noisy_survey = False if (prey_signal or pred_signal) else True
+            self.maybe_noisy_survey = False if (
+                prey_signal or pred_signal) else True
             return prey_signal, pred_signal, node
         else:
             prey_signal = False
