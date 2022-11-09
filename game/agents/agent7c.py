@@ -30,6 +30,10 @@ class Agent7C(Agent7B):
         P(n_surveyed) = 0.1 * P(prey at n_surveyed) / (0.1 * P(prey at n_surveyed) + 1 * P(prey not at n_surveyed))
         P(n_k) = 0 for the kth node containing the agent
         """
+        if self.maybe_noisy_survey == False:
+            super().prey_belief_update_1(graph, surveyed_node)
+            return 0
+
         surveyed_node_new_prey_belief = self.get_prey_noisy_survey_belief(
             surveyed_node)
 
@@ -51,6 +55,10 @@ class Agent7C(Agent7B):
         - Remove the number of ways to get to current agent location if exists in set or current surveyed node if it exists in set
         - Update beliefs based on the number of ways to get to each place in a particular state
         """
+        if self.maybe_noisy_survey == False:
+            super().prey_belief_update_3(graph, surveyed_node)
+            return 0
+
         counts = dict()
         for node in self.prey_frontier:
             counts[node] = counts.get(node, 0) + 1
@@ -91,6 +99,10 @@ class Agent7C(Agent7B):
                 ((0.1 * current_belief) + current_antibelief)
 
             return new_belief
+
+        if self.maybe_noisy_survey == False:
+            super().pred_belief_update_2(graph, surveyed_node)
+            return 0
 
         surveyed_node_new_pred_belief = get_pred_noisy_survey_belief()
 

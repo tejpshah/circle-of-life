@@ -8,6 +8,9 @@ class Agent8B(Agent8):
         # initialize the location of the agent, graph, predator here
         super().__init__(location, graph, predator)
 
+        # initialize whether the surveying was potentially defective
+        self.maybe_noisy_survey = False
+
     def survey_node(self, graph, prey, predator):
         """
         RETURNS (PREY SIGNAL=T/F, PREDATOR SIGNAL=T/F, NODE_SURVEYED=n_i)
@@ -42,10 +45,14 @@ class Agent8B(Agent8):
                 self.prev_preys.append(node)
             if pred_signal:
                 self.prev_preds.append(node)
+
+            self.maybe_noisy_survey = False if (prey_signal or pred_signal) else True
             return prey_signal, pred_signal, node
         else:
             prey_signal = False
             pred_signal = False
+
+            self.maybe_noisy_survey = True
             return prey_signal, pred_signal, node
 
     def prey_belief_update_3(self, graph, surveyed_node):
