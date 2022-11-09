@@ -395,6 +395,36 @@ def labreport_simulation_statistics_agent8C():
         f"Agent8C: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
 
 
+def labreport_simulation_statistics_agent10():
+    """
+    runs 100 simulations 30 times and returns the average 
+    """
+    wins = []
+    losses = []
+    timeouts = []
+    success_rates = []
+    found_prey = []
+    found_pred = []
+
+    for _ in range(30):
+        simulation_wins, simulation_losses, simulation_timeouts, simulation_success, simulation_found_prey, simulation_found_pred = simulation_statistics.agent10(
+            100, 50)
+
+        wins.append(simulation_wins)
+        losses.append(simulation_losses)
+        timeouts.append(simulation_timeouts)
+        success_rates.append(simulation_success)
+        found_prey.append(simulation_found_prey)
+        found_pred.append(simulation_found_pred)
+
+    agent_data = get_overall_simulation_statistics(
+        wins, losses, timeouts, success_rates, found_prey=found_prey, found_pred=found_pred)
+    save_simulation_statistics(
+        "bonus", "agent10", agent_data)
+
+    print(
+        f"Agent10: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
+
 if __name__ == "__main__":
     # labreport_simulation_statistics_agent1()
     # labreport_simulation_statistics_agent2()
@@ -425,3 +455,7 @@ if __name__ == "__main__":
     # labreport_simulation_statistics_agent8C()
     simulation_statistics.visualize(
         "data/", "simulation_statistics_combined-partial-defective-updated.json")
+
+    labreport_simulation_statistics_agent10()
+    simulation_statistics.visualize(
+        "data/", "simulation_statistics_bonus.json")
