@@ -420,7 +420,7 @@ def labreport_simulation_statistics_agent9():
     agent_data = get_overall_simulation_statistics(
         wins, losses, timeouts, success_rates, found_prey=found_prey, found_pred=found_pred)
     save_simulation_statistics(
-        "bonus", "agent9", agent_data)
+        "bonus-9", "agent9", agent_data)
 
     print(
         f"Agent9: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
@@ -451,10 +451,11 @@ def labreport_simulation_statistics_agent10():
     agent_data = get_overall_simulation_statistics(
         wins, losses, timeouts, success_rates, found_prey=found_prey, found_pred=found_pred)
     save_simulation_statistics(
-        "bonus", "agent10", agent_data)
+        "bonus-10", "agent10", agent_data)
 
     print(
         f"Agent10: Overall Success Rate: {round(sum(success_rates) / len(success_rates),2)}%")
+
 
 if __name__ == "__main__":
     # labreport_simulation_statistics_agent1()
@@ -490,4 +491,4 @@ if __name__ == "__main__":
     #labreport_simulation_statistics_agent9()
     labreport_simulation_statistics_agent10()
     # simulation_statistics.visualize(
-    #     "data/", "simulation_statistics_bonus.json")
+    #     "data/", "simulation_statistics_bonus-10.json")
