@@ -33,7 +33,7 @@ class Agent10(Agent2):
         """
 
         # if we have >=30% belief of where the predator is at any 1 location, we move and distribute the probability mass
-        if max(self.pred_beliefs.values()) > 0.10:
+        if max(self.pred_beliefs.values()) > 0.05:
             pred_node = random.choice(self.get_highest_prob_pred_nodes())
             prey_node = random.choice(self.get_highest_prob_prey_nodes())
 
