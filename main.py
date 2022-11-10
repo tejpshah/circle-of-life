@@ -459,37 +459,35 @@ def labreport_simulation_statistics_agent10():
 if __name__ == "__main__":
     # labreport_simulation_statistics_agent1()
     # labreport_simulation_statistics_agent2()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_complete.json")
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_complete.json")
 
     # labreport_simulation_statistics_agent3()
     # labreport_simulation_statistics_agent4()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_partial-prey.json")
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_partial-prey.json")
 
     # labreport_simulation_statistics_agent5()
     # labreport_simulation_statistics_agent6()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_partial-predator.json")
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_partial-predator.json")
 
     # labreport_simulation_statistics_agent7()
     # labreport_simulation_statistics_agent8()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_combined-partial.json")
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_combined-partial.json")
 
     # labreport_simulation_statistics_agent7B()
     # labreport_simulation_statistics_agent8B()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_combined-partial-defective.json")
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_combined-partial-defective.json")
 
     # labreport_simulation_statistics_agent7C()
     # labreport_simulation_statistics_agent8C()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_combined-partial-defective-updated.json")
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_combined-partial-defective-updated.json")
 
-    # labreport_simulation_statistics_agent9()
+    labreport_simulation_statistics_agent9()
     # labreport_simulation_statistics_agent10()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_bonus.json")
-
-    simulation_statistics.agent9testing()
+    # simulation_statistics.visualize(
+    #     "data/", "simulation_statistics_bonus.json")

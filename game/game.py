@@ -628,10 +628,10 @@ class Game:
 
         return status, found_prey, found_pred
 
-    def run_agent_9(self, A, B, C):
+    def run_agent_9(self):
         self.predator = PredatorED(self.predator_location)
         self.agent = Agent9(self.agent_starting_location,
-                            self.graph, self.predator, A, B, C)
+                            self.graph, self.predator)
 
         status = 0
         step_count = 0
