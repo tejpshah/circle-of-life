@@ -488,8 +488,8 @@ if __name__ == "__main__":
     # simulation_statistics.visualize(
     #     "data/", "simulation_statistics_combined-partial-defective-updated.json")
 
-    #labreport_simulation_statistics_agent9()
+    # labreport_simulation_statistics_agent9()
 
-    labreport_simulation_statistics_agent10()
-    simulation_statistics.visualize(
-        "data/", "simulation_statistics_bonus-10.json")
+    # labreport_simulation_statistics_agent10()
+    simulation_statistics.visualize_three_agents(
+        "data/", "simulation_statistics_bonus_7-8-10.json")
