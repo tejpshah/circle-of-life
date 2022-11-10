@@ -472,6 +472,7 @@ def visualize(dirname, filename):
 
     return 1
 
+
 def visualize_three_agents(dirname, filename):
     """
     plot the simulation success rates and error bars
