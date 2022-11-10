@@ -1,14 +1,5 @@
 # circle-of-life
- CS520 Project 2, Tej & Nandini
+*Completed in collaboration between Tej Shah & Srinandini Marpaka*
 
-## NEXT STEPS
-- Implement A9 accounting for defective signal (this is tricky)
-	- Potential Ideas: Update the beliefs according to Bayes Rule (given that the sensor is defective, you update all the belief rules)
-	- Potential Ideas: https://pooyanjamshidi.github.io/csce580/project4/ as reference Q3
-	- Potential Ideas: https://pooyanjamshidi.github.io/csce580/project4/ as reference Q8 (joint particle filtering)
-	- Potential Ideas: https://core.ac.uk/download/pdf/188224232.pdf
-- Write up LaTeX information about A9. 
-- Implement the bonus for when you can only move/signal. 
-- Write up LaTeX information about A10. 
-- Write up LaTeX Q3.5 bonus explanation. 
-- Write an automated script to generate a positive and failure case video for each agent. 
+## Overview
+We develop Agents to interact in the circle-of-life game, where a Predator tries to catch the Agent (loss) before the Agent catches the Prey (win) in various environments. In the complete information and partial prey environments, the predator is optimal, always selecting actions that maximally decrease the distance to the Agent from its action space; in all other environments, the predator is distracted, choosing optimal actions with $0.6$ probability and a random neighbor with $0.4$ probability. The prey always selects any one of its neighbors or its current node randomly. We develop $A1, A2, \ldots, A10$ in various environments: complete, partial prey, partial predator, complete partial, and complete partial defective. 
