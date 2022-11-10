@@ -4,6 +4,7 @@ from game.predatored import PredatorED
 from game.prey import Prey
 from .agent2 import Agent2
 
+
 class Agent10(Agent2):
     def __init__(self, location, graph, predator):
         # initialize the location of the agent here
@@ -41,9 +42,9 @@ class Agent10(Agent2):
             self.pred_belief_update_2(graph, pred_node)
 
             # propogate prey probability mass
-            if len(self.prev_preys) == 0: 
+            if len(self.prev_preys) == 0:
                 self.prey_belief_update_1(graph, prey_node)
-            else: 
+            else:
                 self.prey_belief_update_3(graph, prey_node)
 
             self.normalize_beliefs()
@@ -69,7 +70,8 @@ class Agent10(Agent2):
             else:
                 distances = {}
                 for nbr in graph.nbrs[self.location]:
-                    distances[nbr] = self.bfs(graph, nbr, potential_prey.location)
+                    distances[nbr] = self.bfs(
+                        graph, nbr, potential_prey.location)
                 min_dist = min(distances.values())
 
                 for key, val in distances.items():
@@ -83,15 +85,21 @@ class Agent10(Agent2):
                     self.location = action
 
         # otherwise, we survey the node and and try to get a better measurement of where the predator is and update the beliefs
-        else: 
-            prey_signal, pred_signal, surveyed_node = self.survey_node(graph, prey, predator)
+        else:
+            prey_signal, pred_signal, surveyed_node = self.survey_node(
+                graph, prey, predator)
 
-            if len(self.prev_preys) == 0: self.prey_belief_update_1(graph, surveyed_node)
-            elif prey_signal == True and len(self.prev_preys) > 0: self.prey_belief_update_2(surveyed_node)
-            elif prey_signal == False and len(self.prev_preys) > 0: self.prey_belief_update_3(graph, surveyed_node)
+            if len(self.prev_preys) == 0:
+                self.prey_belief_update_1(graph, surveyed_node)
+            elif prey_signal == True and len(self.prev_preys) > 0:
+                self.prey_belief_update_2(surveyed_node)
+            elif prey_signal == False and len(self.prev_preys) > 0:
+                self.prey_belief_update_3(graph, surveyed_node)
 
-            if pred_signal == True: self.pred_belief_update_1(graph, surveyed_node)
-            elif pred_signal == False: self.pred_belief_update_2(graph, surveyed_node)
+            if pred_signal == True:
+                self.pred_belief_update_1(graph, surveyed_node)
+            elif pred_signal == False:
+                self.pred_belief_update_2(graph, surveyed_node)
 
             self.normalize_beliefs()
         return len(self.prev_preys), len(self.prev_preds)

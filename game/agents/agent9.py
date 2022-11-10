@@ -68,5 +68,5 @@ class Agent9(Agent8C):
 
             if potential_predator_distance > 3 or self.pred_beliefs[action] <= 0.4 or self.prey_beliefs[action] >= 0.2:
                 self.location = action
-        
+
         return len(self.prev_preys), len(self.prev_preds)
