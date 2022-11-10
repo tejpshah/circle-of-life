@@ -4,7 +4,6 @@ from game.predatored import PredatorED
 from game.prey import Prey
 from .agent2 import Agent2
 
-
 class Agent10(Agent2):
     def __init__(self, location, graph, predator):
         # initialize the location of the agent here
@@ -32,57 +31,69 @@ class Agent10(Agent2):
         assume the predator and prey are at one of the locations with the highest probability, chosen randomly
         move according to a modified version of agent2 that accounts for uncertainity 
         """
-        prey_signal, pred_signal, surveyed_node = self.survey_node(
-            graph, prey, predator)
 
-        if len(self.prev_preys) == 0:
-            self.prey_belief_update_1(graph, surveyed_node)
-        elif prey_signal == True and len(self.prev_preys) > 0:
-            self.prey_belief_update_2(surveyed_node)
-        elif prey_signal == False and len(self.prev_preys) > 0:
-            self.prey_belief_update_3(graph, surveyed_node)
+        # if we have >=30% belief of where the predator is at any 1 location, we move and distribute the probability mass
+        if max(self.pred_beliefs.values()) > 0.10:
+            pred_node = random.choice(self.get_highest_prob_pred_nodes())
+            prey_node = random.choice(self.get_highest_prob_prey_nodes())
 
-        if pred_signal == True:
-            self.pred_belief_update_1(graph, surveyed_node)
-        elif pred_signal == False:
-            self.pred_belief_update_2(graph, surveyed_node)
+            # propogate pred probability mass
+            self.pred_belief_update_2(graph, pred_node)
 
-        self.normalize_beliefs()
-        potential_prey = Prey(random.choice(
-            self.get_highest_prob_prey_nodes()))
-        potential_pred = PredatorED(random.choice(
-            self.get_highest_prob_pred_nodes()))
+            # propogate prey probability mass
+            if len(self.prev_preys) == 0: 
+                self.prey_belief_update_1(graph, prey_node)
+            else: 
+                self.prey_belief_update_3(graph, prey_node)
 
-        # MODIFICATION OF A2 CORE LOGIC TO ACCOUNT FOR UNCERTAINTY
-        distances = {}
-        for nbr in graph.nbrs[self.location]:
-            distances[nbr] = self.bfs(graph, nbr, potential_pred.location)
-        max_dist = max(distances.values())
+            self.normalize_beliefs()
 
-        action = 0
-        for key, val in distances.items():
-            if val == max_dist:
-                action = key
+            potential_prey = Prey(prey_node)
+            potential_pred = PredatorED(pred_node)
 
-        # WE ARE MORE CERTAIN ABOUT PREDATOR LOCATION
-        if len(self.prev_preys) == 0:
-            self.location = action
-        # WE KEEP RUNNING AWAY MAXIMALLY FROM PREDATOR UNTIL WE KNOW WHERE PREY IS
-        else:
+            # MODIFICATION OF A2 CORE LOGIC TO ACCOUNT FOR UNCERTAINTY
             distances = {}
             for nbr in graph.nbrs[self.location]:
-                distances[nbr] = self.bfs(graph, nbr, potential_prey.location)
-            min_dist = min(distances.values())
+                distances[nbr] = self.bfs(graph, nbr, potential_pred.location)
+            max_dist = max(distances.values())
 
+            action = 0
             for key, val in distances.items():
-                if val == min_dist:
+                if val == max_dist:
                     action = key
 
-            potential_predator_distance = self.bfs(
-                graph, self.location, potential_pred.location)
-
-            if potential_predator_distance > 3 or self.pred_beliefs[action] <= 0.4 or self.prey_beliefs[action] >= 0.2:
+            # WE ARE MORE CERTAIN ABOUT PREDATOR LOCATION
+            if len(self.prev_preys) == 0:
                 self.location = action
+            # WE KEEP RUNNING AWAY MAXIMALLY FROM PREDATOR UNTIL WE KNOW WHERE PREY IS
+            else:
+                distances = {}
+                for nbr in graph.nbrs[self.location]:
+                    distances[nbr] = self.bfs(graph, nbr, potential_prey.location)
+                min_dist = min(distances.values())
+
+                for key, val in distances.items():
+                    if val == min_dist:
+                        action = key
+
+                potential_predator_distance = self.bfs(
+                    graph, self.location, potential_pred.location)
+
+                if potential_predator_distance > 3 or self.pred_beliefs[action] <= 0.4 or self.prey_beliefs[action] >= 0.2:
+                    self.location = action
+
+        # otherwise, we survey the node and and try to get a better measurement of where the predator is and update the beliefs
+        else: 
+            prey_signal, pred_signal, surveyed_node = self.survey_node(graph, prey, predator)
+
+            if len(self.prev_preys) == 0: self.prey_belief_update_1(graph, surveyed_node)
+            elif prey_signal == True and len(self.prev_preys) > 0: self.prey_belief_update_2(surveyed_node)
+            elif prey_signal == False and len(self.prev_preys) > 0: self.prey_belief_update_3(graph, surveyed_node)
+
+            if pred_signal == True: self.pred_belief_update_1(graph, surveyed_node)
+            elif pred_signal == False: self.pred_belief_update_2(graph, surveyed_node)
+
+            self.normalize_beliefs()
         return len(self.prev_preys), len(self.prev_preds)
 
     def move_debug(self, graph, prey, predator):
